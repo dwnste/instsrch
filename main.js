@@ -56,7 +56,7 @@
             }
         }
 
-      const getPhotos = (lat, long, radius = 1000, count = 30) => {
+      const getPhotos = (lat, long, radius = 5000, count = 100) => {
           const script = document.createElement('SCRIPT');
           script.src = `https://api.vk.com/method/photos.search?lat=${lat}&long=${long}&count=${count}&radius=${radius}&callback=callbackFunc`;
           document.getElementsByTagName("head")[0].appendChild(script);
