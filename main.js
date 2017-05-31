@@ -10,6 +10,7 @@ const init = () => {
     myMap.events.add('click', (e) => {
         const coords = e.get('coords');
         const [lat, long] = coords;
+        getPhotos(lat, long);
         // Если метка уже создана – просто передвигаем ее.
         if (myPlacemark) {
             myPlacemark.geometry.setCoordinates(coords);
@@ -24,17 +25,7 @@ const init = () => {
             });
         }
         getAddress(coords);
-        getPhotos(lat, long);
     });
-    // Создание метки.
-    createPlacemark = (coords) => {
-        return new ymaps.Placemark(coords, {
-            iconCaption: 'поиск...'
-        }, {
-            preset: 'islands#violetDotIconWithCaption',
-            draggable: true
-        });
-    }
     // Определяем адрес по координатам (обратное геокодирование).
     getAddress = (coords) => {
         myPlacemark.properties.set('iconCaption', 'поиск...');
@@ -58,14 +49,22 @@ const init = () => {
 
 const getPhotos = (lat, long, radius = 5000, count = 100) => {
     const script = document.createElement('script');
-    script.src = `//api.vk.com/method/photos.search?lat=${lat}&long=${long}&count=${count}&radius=${radius}&callback=callbackFunc`;
+    script.src = `//api.vk.com/method/photos.search?lat=${lat}&long=${long}&count=${count}&radius=${radius}&callback=renderContent`;
     document.getElementsByTagName("head")[0].appendChild(script);
 }
 
 
+// Создание метки.
+const createPlacemark = (coords) => {
+    return new ymaps.Placemark(coords, {
+        iconCaption: 'поиск...'
+    }, {
+        preset: 'islands#violetDotIconWithCaption',
+        draggable: true
+    });
+}
 
-
-const callbackFunc = (result) => {
+const renderContent = (result) => {
     const photoWrapper = document.getElementById('photoWrap');
     photoWrapper.innerHTML = '';
 
