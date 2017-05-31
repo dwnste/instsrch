@@ -68,10 +68,13 @@
 
         for (let element of result.response) {
             if (element.src_big) {
+                const newLink = document.createElement('a');
+                newLink.setAttribute('href', element.src_big)
+                newLink.setAttribute('target', '_blank');
                 const img = new Image();
                 img.src = element.src;
-                photoWrapper.appendChild(img);
-                console.log(element.src);
+                newLink.appendChild(img);
+                photoWrapper.appendChild(newLink);
             }
         }
       }
