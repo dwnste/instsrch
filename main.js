@@ -62,8 +62,9 @@ const getPhotos = (lat, long, radius = 5000, count = 100) => {
     document.getElementsByTagName("head")[0].appendChild(script);
 }
 
-const callbackFunc = (result) => {
 const photoWrapper = document.getElementById('photoWrap');
+
+const callbackFunc = (result) => {
 photoWrapper.innerHTML = '';
 
 for (let element of result.response) {
