@@ -1,6 +1,5 @@
-        ymaps.ready(init);
-        function init() {
-            var myPlacemark,
+        const init = () => {
+            let myPlacemark,
                 myMap = new ymaps.Map('map', {
                     center: [55.753994, 37.622093],
                     zoom: 9
@@ -8,8 +7,8 @@
                     searchControlProvider: 'yandex#search'
                 });
             // Слушаем клик на карте.
-            myMap.events.add('click', function (e) {
-                var coords = e.get('coords');
+            myMap.events.add('click', (e) => {
+                const coords = e.get('coords');
                 const [lat, long] = coords;
                 // Если метка уже создана – просто передвигаем ее.
                 if (myPlacemark) {
@@ -28,7 +27,7 @@
                 getPhotos(lat, long);
             });
             // Создание метки.
-            function createPlacemark(coords) {
+            createPlacemark = (coords) => {
                 return new ymaps.Placemark(coords, {
                     iconCaption: 'поиск...'
                 }, {
@@ -37,7 +36,7 @@
                 });
             }
             // Определяем адрес по координатам (обратное геокодирование).
-            function getAddress(coords) {
+            getAddress = (coords) => {
                 myPlacemark.properties.set('iconCaption', 'поиск...');
                 ymaps.geocode(coords).then(function (res) {
                     var firstGeoObject = res.geoObjects.get(0);
@@ -56,11 +55,15 @@
                 });
             }
         }
-      var getPhotos = function(lat, long){
-          var script = document.createElement('SCRIPT');
-          script.src = "https://api.vk.com/method/photos.search?lat=" + lat + "&long=" + long + "&count=50&radius=1000&callback=callbackFunc";
+        
+      const getPhotos = (lat, long, radius = 1000, count = 100) => {
+          const script = document.createElement('SCRIPT');
+          script.src = `https://api.vk.com/method/photos.search?lat=${lat}&long=${long}&count=${count}&radius=${radius}&callback=callbackFunc`;
           document.getElementsByTagName("head")[0].appendChild(script);
       }
-      function callbackFunc(result) {
+      
+      const callbackFunc = (result) => {
         console.log(result.response)
       }
+
+      ymaps.ready(init);
