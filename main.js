@@ -55,15 +55,25 @@
                 });
             }
         }
-        
-      const getPhotos = (lat, long, radius = 1000, count = 100) => {
+
+      const getPhotos = (lat, long, radius = 1000, count = 30) => {
           const script = document.createElement('SCRIPT');
           script.src = `https://api.vk.com/method/photos.search?lat=${lat}&long=${long}&count=${count}&radius=${radius}&callback=callbackFunc`;
           document.getElementsByTagName("head")[0].appendChild(script);
       }
       
       const callbackFunc = (result) => {
-        console.log(result.response)
+        const photoWrapper = document.getElementById('photoWrap');
+        photoWrapper.innerHTML = '';
+
+        for (let element of result.response) {
+            if (element.src_big) {
+                const img = new Image();
+                img.src = element.src;
+                photoWrapper.appendChild(img);
+                console.log(element.src);
+            }
+        }
       }
 
       ymaps.ready(init);
