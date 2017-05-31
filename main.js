@@ -62,22 +62,24 @@ const getPhotos = (lat, long, radius = 5000, count = 100) => {
     document.getElementsByTagName("head")[0].appendChild(script);
 }
 
-const photoWrapper = document.getElementById('photoWrap');
+
+
 
 const callbackFunc = (result) => {
-photoWrapper.innerHTML = '';
+    const photoWrapper = document.getElementById('photoWrap');
+    photoWrapper.innerHTML = '';
 
-for (let element of result.response) {
-    if (element.src_big) {
-        const newLink = document.createElement('a');
-        newLink.setAttribute('href', element.src_big)
-        newLink.setAttribute('target', '_blank');
-        const img = new Image();
-        img.src = element.src;
-        newLink.appendChild(img);
-        photoWrapper.appendChild(newLink);
+    for (let element of result.response) {
+        if (element.src_big) {
+            const newLink = document.createElement('a');
+            newLink.setAttribute('href', element.src_big)
+            newLink.setAttribute('target', '_blank');
+            const img = new Image();
+            img.src = element.src;
+            newLink.appendChild(img);
+            photoWrapper.appendChild(newLink);
+        }
     }
-}
 }
 
 ymaps.ready(init);
