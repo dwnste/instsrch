@@ -1,3 +1,40 @@
+import style from './style.scss'
+import fetchJsonp from 'fetch-jsonp'
+
+const getPhotos = (lat, long, radius = 5000, count = 100) => {
+    const url = `//api.vk.com/method/photos.search?lat=${lat}&long=${long}&count=${count}&radius=${radius}`;
+    fetchJsonp(url)
+    .then(function(response) {
+        return response.json()
+    }).then(function(json) {
+        renderContent(json);
+    }).catch(function(ex) {
+        console.log('parsing failed', ex)
+    })
+}
+
+
+// Создание метки.
+const createPlacemark = (coords) => {
+    return new ymaps.Placemark(coords, {
+        iconCaption: 'поиск...'
+    }, {
+        preset: 'islands#violetDotIconWithCaption',
+        draggable: true
+    });
+}
+
+const renderContent = (result) => {
+    const photoWrapper = document.getElementById('photoWrap');
+    photoWrapper.innerHTML = '';
+
+    for (let element of result.response) {
+        if (element.src_big) {
+            photoWrapper.innerHTML+=`<a href="${element.src_big}" target="_blank"><img src="${element.src}"></a>`
+        }
+    }
+}
+
 const init = () => {
     let myPlacemark,
         myMap = new ymaps.Map('map', {
@@ -27,7 +64,7 @@ const init = () => {
         getAddress(coords);
     });
     // Определяем адрес по координатам (обратное геокодирование).
-    getAddress = (coords) => {
+    function getAddress(coords) {
         myPlacemark.properties.set('iconCaption', 'поиск...');
         ymaps.geocode(coords).then(function (res) {
             var firstGeoObject = res.geoObjects.get(0);
@@ -44,40 +81,6 @@ const init = () => {
                     balloonContent: firstGeoObject.getAddressLine()
                 });
         });
-    }
-}
-
-const getPhotos = (lat, long, radius = 5000, count = 100) => {
-    const script = document.createElement('script');
-    script.src = `//api.vk.com/method/photos.search?lat=${lat}&long=${long}&count=${count}&radius=${radius}&callback=renderContent`;
-    document.getElementsByTagName("head")[0].appendChild(script);
-}
-
-
-// Создание метки.
-const createPlacemark = (coords) => {
-    return new ymaps.Placemark(coords, {
-        iconCaption: 'поиск...'
-    }, {
-        preset: 'islands#violetDotIconWithCaption',
-        draggable: true
-    });
-}
-
-const renderContent = (result) => {
-    const photoWrapper = document.getElementById('photoWrap');
-    photoWrapper.innerHTML = '';
-
-    for (let element of result.response) {
-        if (element.src_big) {
-            const newLink = document.createElement('a');
-            newLink.setAttribute('href', element.src_big)
-            newLink.setAttribute('target', '_blank');
-            const img = new Image();
-            img.src = element.src;
-            newLink.appendChild(img);
-            photoWrapper.appendChild(newLink);
-        }
     }
 }
 
