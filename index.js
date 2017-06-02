@@ -1,8 +1,11 @@
 import style from './style.scss'
 import fetchJsonp from 'fetch-jsonp'
+import moment from 'moment'
 
-const getPhotos = (lat, long, radius = 5000, count = 100) => {
-    const url = `//api.vk.com/method/photos.search?lat=${lat}&long=${long}&count=${count}&radius=${radius}`;
+moment.locale('ru');
+
+const getPhotos = (lat, long, radius = 1000, count = 50, offset = 0) => {
+    const url = `//api.vk.com/method/photos.search?lat=${lat}&long=${long}&radius=${radius}&count=${count}`;
     fetchJsonp(url)
     .then(function(response) {
         return response.json()
@@ -24,16 +27,20 @@ const createPlacemark = (coords) => {
     });
 }
 
+
 const renderContent = (result) => {
+    const [count, ...photos] = result.response;
+    console.log(count);
     const photoWrapper = document.getElementById('photoWrap');
     photoWrapper.innerHTML = '';
 
-    for (let element of result.response) {
-        if (element.src_big) {
-            photoWrapper.innerHTML+=`<a href="${element.src_big}" target="_blank"><img src="${element.src}"></a>`
-        }
+    for (let element of photos) {
+        console.log(element)
+        const date = moment(element.created*1000).format('L')
+        photoWrapper.innerHTML+=`<div class="image"><img src="${element.src}"><a href="${element.src_big}" target="_blank"><h2><span>${date}</span></h2></a></div>`
     }
 }
+
 
 const init = () => {
     let myPlacemark,
@@ -63,8 +70,10 @@ const init = () => {
         }
         getAddress(coords);
     });
+
+
     // Определяем адрес по координатам (обратное геокодирование).
-    function getAddress(coords) {
+    const getAddress = (coords) => {
         myPlacemark.properties.set('iconCaption', 'поиск...');
         ymaps.geocode(coords).then(function (res) {
             var firstGeoObject = res.geoObjects.get(0);
