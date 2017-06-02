@@ -4,6 +4,7 @@ import moment from 'moment'
 
 moment.locale('ru');
 
+
 const getPhotos = (lat, long, radius = 1000, count = 50, offset = 0) => {
     const url = `//api.vk.com/method/photos.search?lat=${lat}&long=${long}&radius=${radius}&count=${count}`;
     fetchJsonp(url)
@@ -30,12 +31,10 @@ const createPlacemark = (coords) => {
 
 const renderContent = (result) => {
     const [count, ...photos] = result.response;
-    console.log(count);
     const photoWrapper = document.getElementById('photoWrap');
     photoWrapper.innerHTML = '';
 
     for (let element of photos) {
-        console.log(element)
         const date = moment(element.created*1000).format('L')
         photoWrapper.innerHTML+=`<div class="image"><img src="${element.src}"><a href="${element.src_big}" target="_blank"><h2><span>${date}</span></h2></a></div>`
     }

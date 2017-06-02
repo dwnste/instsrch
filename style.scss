@@ -3,23 +3,6 @@ html, body {
   margin: 0; padding: 0;  /* to avoid scrollbars */
 }
 
-#map {
-    width: 100%;
-    height: 300px;
-}
-
-
-#photoWrap{
-    width: 100%;
-    height: 200px;
-}
-
-.image { 
-   padding: 0 0 0 0;
-   position: relative;
-   float: left;
-}
-
 h2 { 
    position: absolute; 
    bottom: 0px; 
@@ -35,4 +18,30 @@ h2 span {
    background: rgba(0, 0, 0, 0.3);
    padding: 10px; 
 }
-    
+
+#map {
+    width: 100%;
+    height: 300px;
+}
+
+
+#photoWrap{
+    background-color: #111;
+    width: 100%;
+    height: 450px;
+    overflow:auto;
+}
+
+.image { 
+   padding: 0 0 0 0;
+   position: relative;
+   float: left;
+}
+
+.footer {
+    width: 100%;
+    height: 60px;
+    position: absolute;
+    bottom: 0;
+    background-color: #333;
+}
