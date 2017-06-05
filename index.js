@@ -8,8 +8,8 @@ let myPlacemark,
         myMap,
         photoWrapper,
         previousQueryArgs,
-        morePhotosButton,
-        count;
+        morePhotosButton, 
+        photosAvailable;
 
 
 const cleanPhotoWrapper = () => {
@@ -17,7 +17,7 @@ const cleanPhotoWrapper = () => {
 }
 
 const morePhotosButtonClick = () => {
-    if (previousQueryArgs && count > photoWrapper.childElementCount) {
+    if (previousQueryArgs && photosAvailable > photoWrapper.childElementCount) {
         getPhotos(previousQueryArgs.lat, previousQueryArgs.long, undefined, undefined, photoWrapper.childElementCount);
     }
 }
@@ -48,7 +48,7 @@ const createPlacemark = (coords) => {
 
 const renderContent = (result) => {
     let photos;
-    [count, ...photos] = result.response;
+    [photosAvailable, ...photos] = result.response;
     for (let element of photos) {
         const date = moment(element.created*1000).format('L')
         photoWrapper.innerHTML+=`<div class="image"><img src="${element.src}"><a href="${element.src_big}" target="_blank"><h2><span>${date}</span></h2></a></div>`
@@ -85,7 +85,6 @@ const init = () => {
     }, {
         searchControlProvider: 'yandex#search'
     });
-    // Слушаем клик на карте.
     morePhotosButton.addEventListener('click', morePhotosButtonClick);
     myMap.events.add('click', (e) => {
         const coords = e.get('coords');
