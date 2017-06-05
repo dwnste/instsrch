@@ -102,7 +102,11 @@ const init = () => {
             myMap.geoObjects.add(myPlacemark);
             // Слушаем событие окончания перетаскивания на метке.
             myPlacemark.events.add('dragend', function () {
-                getAddress(myPlacemark.geometry.getCoordinates());
+                const [lat, long] = myPlacemark.geometry.getCoordinates();
+                getAddress([lat, long]);
+                cleanPhotoWrapper();
+                getPhotos(lat, long);
+                previousQueryArgs = {lat, long};
             });
         }
         getAddress(coords);

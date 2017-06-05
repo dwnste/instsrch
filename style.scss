@@ -32,10 +32,13 @@ h2 span {
     overflow:auto;
 }
 
-.image { 
-   padding: 0 0 0 0;
-   position: relative;
-   float: left;
+.image {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    padding: 0 0 0 0;
+    position: relative;
+    float: left;
 }
 
 .footer {
