@@ -2,7 +2,9 @@ import style from './style.scss'
 import fetchJsonp from 'fetch-jsonp'
 import moment from 'moment'
 
+
 moment.locale('ru');
+
 
 let myPlacemark,
         myMap,
@@ -12,9 +14,10 @@ let myPlacemark,
         photosAvailable;
 
 
-const cleanPhotoWrapper = () => {
-    photoWrapper.innerHTML = '';
+const updatePhotoWrapper = (content) => {
+    photoWrapper.innerHTML = content;
 }
+
 
 const morePhotosButtonClick = () => {
     if (previousQueryArgs && photosAvailable > photoWrapper.childElementCount) {
@@ -22,13 +25,14 @@ const morePhotosButtonClick = () => {
     }
 }
 
+
 const getPhotos = (lat, long, radius = 1000, count = 50, offset = 0) => {
     const url = `//api.vk.com/method/photos.search?lat=${lat}&long=${long}&radius=${radius}&count=${count}&offset=${offset}`;
-    fetchJsonp(url)
+    return fetchJsonp(url)
     .then(function(response) {
         return response.json()
     }).then(function(json) {
-        renderContent(json);
+        return json;
     }).catch(function(ex) {
         console.log('parsing failed', ex)
     })
@@ -50,10 +54,11 @@ const renderContent = (result) => {
     let photos;
     [photosAvailable, ...photos] = result.response;
     for (let element of photos) {
-        const date = moment(element.created*1000).format('L')
+        const date = moment(element.created*1000).format('L');
         photoWrapper.innerHTML+=`<div class="image"><img src="${element.src}"><a href="${element.src_big}" target="_blank"><h2><span>${date}</span></h2></a></div>`
     }
 }
+
 
 // Определяем адрес по координатам (обратное геокодирование).
 const getAddress = (coords) => {
@@ -89,8 +94,8 @@ const init = () => {
     myMap.events.add('click', (e) => {
         const coords = e.get('coords');
         const [lat, long] = coords;
-        cleanPhotoWrapper();
-        getPhotos(lat, long);
+        updatePhotoWrapper('');
+        getPhotos(lat, long).then(json=>renderContent(json));
         previousQueryArgs = {lat, long};
         // Если метка уже создана – просто передвигаем ее.
         if (myPlacemark) {
@@ -104,13 +109,14 @@ const init = () => {
             myPlacemark.events.add('dragend', function () {
                 const [lat, long] = myPlacemark.geometry.getCoordinates();
                 getAddress([lat, long]);
-                cleanPhotoWrapper();
-                getPhotos(lat, long);
+                updatePhotoWrapper('');
+                getPhotos(lat, long).then(json=>renderContent(json));
                 previousQueryArgs = {lat, long};
             });
         }
         getAddress(coords);
     });
 }
+
 
 ymaps.ready(init);
