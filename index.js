@@ -21,7 +21,7 @@ const updatePhotoWrapper = (content) => {
 
 const morePhotosButtonClick = () => {
     if (previousQueryArgs && photosAvailable > photoWrapper.childElementCount) {
-        getPhotos(previousQueryArgs.lat, previousQueryArgs.long, undefined, undefined, photoWrapper.childElementCount);
+        getPhotos(previousQueryArgs.lat, previousQueryArgs.long, undefined, undefined, photoWrapper.childElementCount).then(json=>renderContent(json));
     }
 }
 
