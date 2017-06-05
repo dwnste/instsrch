@@ -49,7 +49,6 @@ const createPlacemark = (coords) => {
 const renderContent = (result) => {
     let photos;
     [count, ...photos] = result.response;
-    console.log(`count from render content ${count}`)
     for (let element of photos) {
         const date = moment(element.created*1000).format('L')
         photoWrapper.innerHTML+=`<div class="image"><img src="${element.src}"><a href="${element.src_big}" target="_blank"><h2><span>${date}</span></h2></a></div>`
