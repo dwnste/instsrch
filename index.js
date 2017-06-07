@@ -65,7 +65,7 @@ const myMapClick = (e) => {
             // Слушаем событие окончания перетаскивания на метке.
             myPlacemark.events.add('dragend', function () {
                 const coords = myPlacemark.geometry.getCoordinates();
-                getAddress(coords);
+                updateMyPlacemark(getGeoObject(coords));
                 updatePhotoWrapper('');
 
                 const [lat, long] = coords;
@@ -79,7 +79,7 @@ const myMapClick = (e) => {
             });
         }
 
-        getAddress(coords);
+        updateMyPlacemark(coords);
     };
 
 // Создание метки.
@@ -97,13 +97,15 @@ const renderContent = (photos) =>
     photos.map(element=>`<div class="image"><img src="${element.src}"><a href="${element.src_big}" target="_blank"><h2><span>${moment(element.created*1000).format('L')}</span></h2></a></div>`).join('');
 
 
-
 // Определяем адрес по координатам (обратное геокодирование).
-const getAddress = (coords) => {
+const getGeoObject = (coords) => {
+    return ymaps.geocode(coords).then(res=>res.geoObjects.get(0));
+}
+
+const updateMyPlacemark = (coords) => {
     myPlacemark.properties.set('iconCaption', 'поиск...');
 
-    ymaps.geocode(coords).then(function (res) {
-        var firstGeoObject = res.geoObjects.get(0);
+    getGeoObject(coords).then(firstGeoObject => {
 
         myPlacemark.properties
             .set({
