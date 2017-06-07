@@ -15,7 +15,6 @@ let myPlacemark,
 
 
 const getPhotos = ({lat, long}, radius = 1000, count = 50, offset = 0) => {
-    //const [lat, long] = coords;
     const url = `//api.vk.com/method/photos.search?lat=${lat}&long=${long}&radius=${radius}&count=${count}&offset=${offset}`;
     
     return fetchJsonp(url)
@@ -48,7 +47,7 @@ const createPlacemark = (coords) => {
     return new ymaps.Placemark(coords, {
         iconCaption: 'поиск...'
     }, {
-        preset: 'islands#violetDotIconWithCaption',
+        preset: 'islands#blackDotIconWithCaption',
         draggable: true
     });
 }
