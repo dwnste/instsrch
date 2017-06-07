@@ -41,6 +41,46 @@ const morePhotosButtonClick = () => {
     }
 }
 
+const myMapClick = (e) => {
+        const coords = e.get('coords');
+        
+        updatePhotoWrapper('');
+
+        const [lat, long] = coords;
+
+        getPhotos({lat, long}).then(photoResponse=>{
+            photosAvailable = photoResponse.photosAvailable;
+            updatePhotoWrapper(renderContent(photoResponse.photos));
+        });
+
+        previousQueryCoords = {lat, long};
+        // Если метка уже создана – просто передвигаем ее.
+        if (myPlacemark) {
+            myPlacemark.geometry.setCoordinates(coords);
+        }
+        // Если нет – создаем.
+        else {
+            myPlacemark = createPlacemark(coords);
+            myMap.geoObjects.add(myPlacemark);
+            // Слушаем событие окончания перетаскивания на метке.
+            myPlacemark.events.add('dragend', function () {
+                const coords = myPlacemark.geometry.getCoordinates();
+                getAddress(coords);
+                updatePhotoWrapper('');
+
+                const [lat, long] = coords;
+
+                getPhotos({lat, long}).then(photoResponse=>{
+                    photosAvailable = photoResponse.photosAvailable;
+                    updatePhotoWrapper(renderContent(photoResponse.photos));
+                });
+
+                previousQueryCoords = {lat, long};
+            });
+        }
+
+        getAddress(coords);
+    };
 
 // Создание метки.
 const createPlacemark = (coords) => {
@@ -94,46 +134,7 @@ const init = () => {
 
     morePhotosButton.addEventListener('click', morePhotosButtonClick);
 
-    myMap.events.add('click', (e) => {
-        const coords = e.get('coords');
-        
-        updatePhotoWrapper('');
-
-        const [lat, long] = coords;
-
-        getPhotos({lat, long}).then(photoResponse=>{
-            photosAvailable = photoResponse.photosAvailable;
-            updatePhotoWrapper(renderContent(photoResponse.photos));
-        });
-
-        previousQueryCoords = {lat, long};
-        // Если метка уже создана – просто передвигаем ее.
-        if (myPlacemark) {
-            myPlacemark.geometry.setCoordinates(coords);
-        }
-        // Если нет – создаем.
-        else {
-            myPlacemark = createPlacemark(coords);
-            myMap.geoObjects.add(myPlacemark);
-            // Слушаем событие окончания перетаскивания на метке.
-            myPlacemark.events.add('dragend', function () {
-                const coords = myPlacemark.geometry.getCoordinates();
-                getAddress(coords);
-                updatePhotoWrapper('');
-
-                const [lat, long] = coords;
-
-                getPhotos({lat, long}).then(photoResponse=>{
-                    photosAvailable = photoResponse.photosAvailable;
-                    updatePhotoWrapper(renderContent(photoResponse.photos));
-                });
-
-                previousQueryCoords = {lat, long};
-            });
-        }
-
-        getAddress(coords);
-    });
+    myMap.events.add('click', e => myMapClick(e));
 }
 
 
