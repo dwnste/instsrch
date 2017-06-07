@@ -34,12 +34,9 @@
     "sass-loader": "^6.0.5",
     "style-loader": "^0.18.1",
     "webpack": "^2.6.1",
-    "webpack-dev-server": "^2.2.0"
+    "webpack-dev-server": "^2.2.0",
+    "moment": "^2.18.1"
   },
   "dependencies": {
-    "css-loader": "^0.28.4",
-    "moment": "^2.18.1",
-    "node-sass": "^4.5.3",
-    "sass-loader": "^6.0.5"
   }
 }
