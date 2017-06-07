@@ -14,20 +14,17 @@ let myPlacemark,
         photosAvailable;
 
 
-const getPhotos = (coords, radius = 1000, count = 50, offset = 0) => {
-    const [lat, long] = coords;
+const getPhotos = ({lat, long}, radius = 1000, count = 50, offset = 0) => {
+    //const [lat, long] = coords;
     const url = `//api.vk.com/method/photos.search?lat=${lat}&long=${long}&radius=${radius}&count=${count}&offset=${offset}`;
     
     return fetchJsonp(url)
-    .then(function(response) {
-        return response.json()
-    }).then(function(json) {
-        let photos;
-        [photosAvailable, ...photos] = json.response;
-        return photos;
-    }).catch(function(ex) {
-        console.log('parsing failed', ex)
-    })
+                .then( response => response.json())
+                .then( ({ response }) => {
+                            let [photosAvailable, ...photos] = response;
+                            return {photosAvailable, photos};
+                        })
+                .catch( ex => console.log('parsing failed', ex) );
 }
 
 
@@ -38,7 +35,10 @@ const updatePhotoWrapper = (content) => {
 
 const morePhotosButtonClick = () => {
     if (previousQueryCoords && photosAvailable > photoWrapper.childElementCount) {
-        getPhotos(previousQueryCoords, undefined, undefined, photoWrapper.childElementCount).then(json=>updatePhotoWrapper(renderContent(json)));
+        getPhotos(previousQueryCoords, undefined, undefined, photoWrapper.childElementCount).then(photoResponse=>{
+            photosAvailable = photoResponse.photosAvailable;
+            updatePhotoWrapper(renderContent(photoResponse.photos));
+        });
     }
 }
 
@@ -57,10 +57,10 @@ const createPlacemark = (coords) => {
 const renderContent = (photos) => {
     let content;
 
-    for (let element of photos) {
+    content = photos.map(element=>{
         const date = moment(element.created*1000).format('L');
-        content+=`<div class="image"><img src="${element.src}"><a href="${element.src_big}" target="_blank"><h2><span>${date}</span></h2></a></div>`
-    }
+        return `<div class="image"><img src="${element.src}"><a href="${element.src_big}" target="_blank"><h2><span>${date}</span></h2></a></div>`
+    })
 
     return content;
 }
@@ -107,8 +107,14 @@ const init = () => {
         
         updatePhotoWrapper('');
 
-        getPhotos(coords).then(json=>updatePhotoWrapper(renderContent(json)));
-        previousQueryCoords = coords;
+        const [lat, long] = coords;
+
+        getPhotos({lat, long}).then(photoResponse=>{
+            photosAvailable = photoResponse.photosAvailable;
+            updatePhotoWrapper(renderContent(photoResponse.photos));
+        });
+
+        previousQueryCoords = {lat, long};
         // Если метка уже создана – просто передвигаем ее.
         if (myPlacemark) {
             myPlacemark.geometry.setCoordinates(coords);
@@ -122,8 +128,15 @@ const init = () => {
                 const coords = myPlacemark.geometry.getCoordinates();
                 getAddress(coords);
                 updatePhotoWrapper('');
-                getPhotos(coords).then(json=>updatePhotoWrapper(renderContent(json)));
-                previousQueryCoords = coords;
+
+                const [lat, long] = coords;
+
+                getPhotos({lat, long}).then(photoResponse=>{
+                    photosAvailable = photoResponse.photosAvailable;
+                    updatePhotoWrapper(renderContent(photoResponse.photos));
+                });
+
+                previousQueryCoords = {lat, long};
             });
         }
 
