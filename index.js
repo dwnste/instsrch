@@ -53,16 +53,9 @@ const createPlacemark = (coords) => {
 }
 
 
-const renderContent = (photos) => {
-    let content;
+const renderContent = (photos) =>
+    photos.map(element=>`<div class="image"><img src="${element.src}"><a href="${element.src_big}" target="_blank"><h2><span>${moment(element.created*1000).format('L')}</span></h2></a></div>`).join('');
 
-    content = photos.map(element=>{
-        const date = moment(element.created*1000).format('L');
-        return `<div class="image"><img src="${element.src}"><a href="${element.src_big}" target="_blank"><h2><span>${date}</span></h2></a></div>`
-    })
-
-    return content;
-}
 
 
 // Определяем адрес по координатам (обратное геокодирование).
