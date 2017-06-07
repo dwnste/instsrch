@@ -14,9 +14,10 @@ let myPlacemark,
         photosAvailable;
 
 
-const getPhotos = (coords, offset = 0, radius = 1000, count = 50) => {
+const getPhotos = (coords, radius = 1000, count = 50, offset = 0) => {
     const [lat, long] = coords;
     const url = `//api.vk.com/method/photos.search?lat=${lat}&long=${long}&radius=${radius}&count=${count}&offset=${offset}`;
+    
     return fetchJsonp(url)
     .then(function(response) {
         return response.json()
@@ -55,10 +56,12 @@ const createPlacemark = (coords) => {
 
 const renderContent = (photos) => {
     let content;
+
     for (let element of photos) {
         const date = moment(element.created*1000).format('L');
         content+=`<div class="image"><img src="${element.src}"><a href="${element.src_big}" target="_blank"><h2><span>${date}</span></h2></a></div>`
     }
+
     return content;
 }
 
@@ -66,8 +69,10 @@ const renderContent = (photos) => {
 // Определяем адрес по координатам (обратное геокодирование).
 const getAddress = (coords) => {
     myPlacemark.properties.set('iconCaption', 'поиск...');
+
     ymaps.geocode(coords).then(function (res) {
         var firstGeoObject = res.geoObjects.get(0);
+
         myPlacemark.properties
             .set({
                 // Формируем строку с данными об объекте.
@@ -87,20 +92,22 @@ const getAddress = (coords) => {
 const init = () => {
     photoWrapper = document.getElementById('photoWrap');
     morePhotosButton = document.getElementById('morePhotosButton');
+
     myMap = new ymaps.Map('map', {
         center: [55.753994, 37.622093],
         zoom: 9
     }, {
         searchControlProvider: 'yandex#search'
     });
+
     morePhotosButton.addEventListener('click', morePhotosButtonClick);
+
     myMap.events.add('click', (e) => {
         const coords = e.get('coords');
         
         updatePhotoWrapper('');
 
         getPhotos(coords).then(json=>updatePhotoWrapper(renderContent(json)));
-
         previousQueryCoords = coords;
         // Если метка уже создана – просто передвигаем ее.
         if (myPlacemark) {
@@ -119,6 +126,7 @@ const init = () => {
                 previousQueryCoords = coords;
             });
         }
+
         getAddress(coords);
     });
 }
