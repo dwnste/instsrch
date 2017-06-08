@@ -13,6 +13,9 @@ module.exports = {
         publicPath: '/dist/',
         filename: '[name].js',
     },
+    externals: {
+        ymaps: "ymaps"
+    },
     module: {
         rules: [
             {

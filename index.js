@@ -1,7 +1,7 @@
 import style from './style.scss'
 import fetchJsonp from 'fetch-jsonp'
 import moment from 'moment'
-
+import ymaps from 'ymaps'
 
 moment.locale('ru');
 
@@ -164,13 +164,7 @@ const init = () => {
         updateMyPlacemark(coords);
         updatePhotoWrapper('');
 
-    myPlacemark.events.add('dragend', () => {
-        const coords = myPlacemark.geometry.getCoordinates();
-        updateMyPlacemark(coords);
-        updatePhotoWrapper('');
-
         const offset = 0;
-
         update({coords, offset});
 
     });
