@@ -41,7 +41,7 @@ const renderContent = (photos) =>
             <div class="image">
                 <img src="${element.src}"/>
                 <a href="${element.src_big}" target="_blank">
-                    <h2><span>${moment(element.created*1000).format('L')}</span></h2>
+                    ${moment(element.created*1000).format('L')}
                 </a>
             </div>`
         )
