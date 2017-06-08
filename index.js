@@ -7,6 +7,9 @@ import jquery from 'jquery'
 moment.locale('ru');
 
 
+const mapCenter = [55.753994, 37.622093];
+
+
 let myPlacemark,
         myMap,
         photoWrapper
@@ -127,7 +130,7 @@ const init = () => {
 
     // инициализация карты
     myMap = new ymaps.Map('map', {
-        center: [55.753994, 37.622093],
+        center: mapCenter,
         zoom: 9
     }, {
         searchControlProvider: 'yandex#search'
@@ -135,7 +138,7 @@ const init = () => {
 
 
     // ставим метку и грузим фотографии, когда карта загрузилась
-    const coords = myMap.getCenter();
+    const coords = mapCenter;
     myPlacemark = createPlacemark(coords);
     myMap.geoObjects.add(myPlacemark);
     updateMyPlacemark(coords);
