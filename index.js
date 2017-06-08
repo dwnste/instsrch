@@ -107,10 +107,14 @@ const update = ({coords = state.coords, count = 50, radius = 1000, offset = stat
         getPhotos({...state, coords, count, radius, offset}).then(photoResponse=>{
             state.photosAvailable = photoResponse.photosAvailable;
             updatePhotoWrapper(renderContent(photoResponse.photos));
-        });
 
-        state.offset += count;
-        state.coords = coords;
+            state.offset += count;
+            state.coords = coords;
+
+            if (photoWrapper.scrollHeight <= photoWrapper.clientHeight) {
+                update({});
+            }
+        });
     }
 }
 
