@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/webpack-dev-server --config webpack.config.js"
+    "start": "./node_modules/.bin/webpack-dev-server --config react-webpack.config.js",
+    "start2": "./node_modules/.bin/webpack-dev-server --config webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
     "babel-eslint": "^6.1.2",
     "babel-loader": "^7.0.0",
     "babel-preset-env": "^1.5.1",
+    "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "css-loader": "^0.28.4",
     "eslint": "^3.19.0",
@@ -33,6 +35,8 @@
     "json-fetch": "^7.0.1",
     "moment": "^2.18.1",
     "node-sass": "^4.5.3",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
     "sass-loader": "^6.0.5",
     "style-loader": "^0.18.1",
     "webpack": "^2.6.1",

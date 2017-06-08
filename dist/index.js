@@ -1,7 +1,7 @@
 import style from './style.scss'
-import fetchJsonp from 'fetch-jsonp'
 import moment from 'moment'
 import ymaps from 'ymaps'
+import {getPhotos, createPlacemark, getGeoObject} from '../lib'
 
 moment.locale('ru');
 
@@ -18,21 +18,6 @@ let state = {
     photosAvailable: 0,
     offset: 0
 };
-
-
-const getPhotos = ({coords, radius, count, offset}) => {
-    const [lat, long] = coords;
-    const url = `//api.vk.com/method/photos.search?lat=${lat}&long=${long}&radius=${radius}&count=${count}&offset=${offset}`;
-
-    return fetchJsonp(url)
-                .then( response => response.json())
-                .then( ({ response }) => {
-                            let [photosAvailable, ...photos] = response;
-                            return {photosAvailable, photos};
-                        })
-                .catch( ex => console.log('parsing failed', ex) );
-}
-
 
 
 const renderContent = (photos) =>
@@ -54,23 +39,25 @@ const updatePhotoWrapper = (content) => {
 }
 
 
-// Создание метки.
-const createPlacemark = coords =>
-    new ymaps.Placemark(
-        coords,
-        { iconCaption: 'поиск...' },
-        { preset: 'islands#blackDotIconWithCaption',
-          draggable: true }
-    );
+const update = ({coords = state.coords, count = 50, radius = 1000, offset = state.offset}) => {
 
+    state.offset = offset === 0 ? 0 : state.offset;
 
+    if (state.offset <= state.photosAvailable) {
 
-// Определяем адрес по координатам (обратное геокодирование).
-const getGeoObject = coords =>
-    ymaps.geocode(coords)
-         .then(res=>res.geoObjects.get(0));
+        getPhotos({...state, coords, count, radius, offset}).then(photoResponse=>{
+            state.photosAvailable = photoResponse.photosAvailable;
+            updatePhotoWrapper(renderContent(photoResponse.photos));
 
+            state.offset += count;
+            state.coords = coords;
 
+            if (photoWrapper.scrollHeight <= photoWrapper.clientHeight) {
+                update({});
+            }
+        });
+    }
+}
 
 // Обновление позиции и текста метки
 const updateMyPlacemark = (coords) => {
@@ -98,28 +85,6 @@ const updateMyPlacemark = (coords) => {
                 })
     );
 }
-
-
-const update = ({coords = state.coords, count = 50, radius = 1000, offset = state.offset}) => {
-
-    state.offset = offset === 0 ? 0 : state.offset;
-
-    if (state.offset <= state.photosAvailable) {
-
-        getPhotos({...state, coords, count, radius, offset}).then(photoResponse=>{
-            state.photosAvailable = photoResponse.photosAvailable;
-            updatePhotoWrapper(renderContent(photoResponse.photos));
-
-            state.offset += count;
-            state.coords = coords;
-
-            if (photoWrapper.scrollHeight <= photoWrapper.clientHeight) {
-                update({});
-            }
-        });
-    }
-}
-
 
 const init = () => {
     photoWrapper = document.getElementById('photoWrap');
