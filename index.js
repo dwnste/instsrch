@@ -97,6 +97,11 @@ const updateMyPlacemark = (coords) => {
 }
 
 
+const scrollPhotoWrapper = () => {
+    photoWrapper.scrollTop = photoWrapper.scrollHeight;
+}
+
+
 const update = ({coords = state.coords, count = 50, radius = 1000, offset = state.offset}) => {
 
     state.offset = offset === 0 ? 0 : state.offset;
@@ -106,6 +111,7 @@ const update = ({coords = state.coords, count = 50, radius = 1000, offset = stat
         getPhotos({...state, coords, count, radius, offset}).then(photoResponse=>{
             state.photosAvailable = photoResponse.photosAvailable;
             updatePhotoWrapper(renderContent(photoResponse.photos));
+            scrollPhotoWrapper();
         });
 
         state.offset += count;
