@@ -2,7 +2,6 @@ import style from './style.scss'
 import fetchJsonp from 'fetch-jsonp'
 import moment from 'moment'
 import ymaps from 'ymaps'
-import jquery from 'jquery'
 
 moment.locale('ru');
 
@@ -125,9 +124,6 @@ const update = ({coords = state.coords, count = 50, radius = 1000, offset = stat
 const init = () => {
     photoWrapper = document.getElementById('photoWrap');
 
-    // const morePhotosButton = document.getElementById('morePhotosButton');
-
-
     // инициализация карты
     myMap = new ymaps.Map('map', {
         center: MAP_CENTER,
@@ -166,8 +162,8 @@ const init = () => {
 
     });
 
-    $(photoWrapper).bind('scroll', function(){
-        if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight){
+    photoWrapper.addEventListener('scroll', () => {
+        if (photoWrapper.scrollTop + photoWrapper.clientHeight >= photoWrapper.scrollHeight) {
             update({});
         }
     });
