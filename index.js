@@ -2,6 +2,7 @@ import style from './style.scss'
 import fetchJsonp from 'fetch-jsonp'
 import moment from 'moment'
 import ymaps from 'ymaps'
+import jquery from 'jquery'
 
 moment.locale('ru');
 
@@ -97,11 +98,6 @@ const updateMyPlacemark = (coords) => {
 }
 
 
-const scrollPhotoWrapper = () => {
-    photoWrapper.scrollTop = photoWrapper.scrollHeight;
-}
-
-
 const update = ({coords = state.coords, count = 50, radius = 1000, offset = state.offset}) => {
 
     state.offset = offset === 0 ? 0 : state.offset;
@@ -111,7 +107,6 @@ const update = ({coords = state.coords, count = 50, radius = 1000, offset = stat
         getPhotos({...state, coords, count, radius, offset}).then(photoResponse=>{
             state.photosAvailable = photoResponse.photosAvailable;
             updatePhotoWrapper(renderContent(photoResponse.photos));
-            scrollPhotoWrapper();
         });
 
         state.offset += count;
@@ -122,7 +117,8 @@ const update = ({coords = state.coords, count = 50, radius = 1000, offset = stat
 
 const init = () => {
     photoWrapper = document.getElementById('photoWrap');
-    const morePhotosButton = document.getElementById('morePhotosButton');
+
+    // const morePhotosButton = document.getElementById('morePhotosButton');
 
 
     // инициализация карты
@@ -143,10 +139,11 @@ const init = () => {
 
 
     // обработчики событий 
+    /*
     morePhotosButton.addEventListener('click', () => {
         update({});
     });
-
+    */
 
     myMap.events.add('click', (e) => {
         const coords = e.get('coords');
@@ -168,6 +165,14 @@ const init = () => {
         update({coords, offset});
 
     });
+
+    $(photoWrapper).bind('scroll', function(){
+        if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight){
+            update({});
+        }
+    });
+
+
 }
 
 

@@ -14,7 +14,7 @@ module.exports = {
         filename: '[name].js',
     },
     externals: {
-        ymaps: "ymaps"
+        ymaps: "ymaps",
     },
     module: {
         rules: [
@@ -32,7 +32,11 @@ module.exports = {
         ],
     },
     plugins: [
-        new ExtractTextPlugin("style.css")
+        new ExtractTextPlugin("style.css"),
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery"
+        })
     ],
     devtool: 'source-map',
     devServer: {
