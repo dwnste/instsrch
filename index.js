@@ -16,6 +16,7 @@ let state = {
     offset: 0
 };
 
+
 const getPhotos = ({coords, radius, count, offset}) => {
     const [lat, long] = coords;
     const url = `//api.vk.com/method/photos.search?lat=${lat}&long=${long}&radius=${radius}&count=${count}&offset=${offset}`;
@@ -30,6 +31,7 @@ const getPhotos = ({coords, radius, count, offset}) => {
 }
 
 
+
 const renderContent = (photos) =>
     photos
         .map(element=>`
@@ -41,6 +43,7 @@ const renderContent = (photos) =>
             </div>`
         )
         .join('');
+
 
 
 const updatePhotoWrapper = (content) => {
@@ -58,6 +61,7 @@ const createPlacemark = coords =>
     );
 
 
+
 // Определяем адрес по координатам (обратное геокодирование).
 const getGeoObject = coords =>
     ymaps.geocode(coords)
@@ -65,7 +69,10 @@ const getGeoObject = coords =>
 
 
 
+// Обновление позиции и текста метки
 const updateMyPlacemark = (coords) => {
+    myPlacemark.geometry
+        .setCoordinates(coords);
     myPlacemark.properties
         .set('iconCaption', 'поиск...');
     getGeoObject(coords)
@@ -111,6 +118,8 @@ const init = () => {
     photoWrapper = document.getElementById('photoWrap');
     const morePhotosButton = document.getElementById('morePhotosButton');
 
+
+    // инициализация карты
     myMap = new ymaps.Map('map', {
         center: [55.753994, 37.622093],
         zoom: 9
@@ -118,29 +127,36 @@ const init = () => {
         searchControlProvider: 'yandex#search'
     });
 
-    morePhotosButton.addEventListener('click', () => {
-        update({});
-    });
 
-    myMap.events.add('click', (e) => {
-        const coords = e.get('coords');
-        const offset = 0;
-        updatePhotoWrapper('');
-
-        update({coords, offset});
-
-        // Если метка уже создана – просто передвигаем ее.
-        myPlacemark.geometry.setCoordinates(coords);
-
-        updateMyPlacemark(coords);
-    });
-
+    // ставим метку и грузим фотографии, когда карта загрузилась
     const coords = myMap.getCenter();
     myPlacemark = createPlacemark(coords);
     myMap.geoObjects.add(myPlacemark);
     updateMyPlacemark(coords);
     update({coords});
 
+
+    // обработчики событий 
+    morePhotosButton.addEventListener('click', () => {
+        update({});
+    });
+
+
+    myMap.events.add('click', (e) => {
+        const coords = e.get('coords');
+        updateMyPlacemark(coords);
+        updatePhotoWrapper('');
+
+        const offset = 0;
+        update({coords, offset});
+
+    });
+
+
+    myPlacemark.events.add('dragend', () => {
+        const coords = myPlacemark.geometry.getCoordinates();
+        updateMyPlacemark(coords);
+        updatePhotoWrapper('');
 
     myPlacemark.events.add('dragend', () => {
         const coords = myPlacemark.geometry.getCoordinates();
