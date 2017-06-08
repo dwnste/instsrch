@@ -7,6 +7,9 @@ module.exports = {
         index: [
             path.join(__dirname, './dist/index.js'),
         ],
+        react: [
+            path.join(__dirname, './dist/react.jsx')
+        ]
     },
     output: {
         path: path.join(__dirname, './dist/'),
@@ -34,9 +37,7 @@ module.exports = {
                 test: /\.jsx$/,
                 loader: 'babel-loader',
                 query: {
-                    presets: [
-                    [ 'env', 'react' , { modules: false } ]
-                    ]
+                    presets: ['env', 'react']
                 },
                 exclude: /node_modules/
             }
