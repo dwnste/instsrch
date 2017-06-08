@@ -14,17 +14,19 @@ module.exports = {
         filename: '[name].js',
     },
     module: {
-        rules: [{
-            test: /\.js$/,
-            exclude: /(node_modules)/,
-            loader: 'babel-loader',
-        }, 
-        {
-            test: /\.scss$/,
-            loader: ExtractTextPlugin.extract({
-                fallbackLoader: 'style-loader', loader: 'css-loader!sass-loader'
-            })
-        }],
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /(node_modules)/,
+                loader: 'babel-loader',
+            },
+            {
+                test: /\.scss$/,
+                loader: ExtractTextPlugin.extract({
+                    fallbackLoader: 'style-loader', loader: 'css-loader!sass-loader'
+                })
+            }
+        ],
     },
     plugins: [
         new ExtractTextPlugin("style.css")
