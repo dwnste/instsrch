@@ -142,16 +142,16 @@ const init = () => {
     update({coords});
 
 
-    myPlacemark.events.add('dragend', function () {
-                const coords = myPlacemark.geometry.getCoordinates();
-                updateMyPlacemark(coords);
-                updatePhotoWrapper('');
+    myPlacemark.events.add('dragend', () => {
+        const coords = myPlacemark.geometry.getCoordinates();
+        updateMyPlacemark(coords);
+        updatePhotoWrapper('');
 
-                const offset = 0;
+        const offset = 0;
 
-                update({coords, offset});
+        update({coords, offset});
 
-            });
+    });
 }
 
 
