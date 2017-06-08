@@ -32,11 +32,7 @@ module.exports = {
         ],
     },
     plugins: [
-        new ExtractTextPlugin("style.css"),
-        new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery"
-        })
+        new ExtractTextPlugin("style.css")
     ],
     devtool: 'source-map',
     devServer: {
