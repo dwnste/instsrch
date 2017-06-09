@@ -2,15 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import InfiniteScroll from 'react-infinite-scroller';
 import moment from 'moment';
-import {getPhotos, createPlacemark, getGeoObject} from '../lib';
+import { getPhotos, createPlacemark, getGeoObject } from '../lib';
 
 moment.locale('ru');
 
 const MAP_CENTER = [55.753994, 37.622093];
 
 let myPlacemark,
-        myMap,
-        photoWrapper
+    myMap,
+    photoWrapper;
 
 // Обновление позиции и текста метки
 const updateMyPlacemark = (coords) => {
@@ -41,10 +41,6 @@ const updateMyPlacemark = (coords) => {
     );
 };
 
-
-const update = ({ coords, count = 50, radius = 1000, offset = 0 }) => {
-    getPhotos({});
-};
 
 const init = () => {
     photoWrapper = document.getElementById('photoWrap');

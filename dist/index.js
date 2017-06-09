@@ -10,8 +10,8 @@ const MAP_CENTER = [55.753994, 37.622093];
 
 
 let myPlacemark,
-        myMap,
-        photoWrapper
+    myMap,
+    photoWrapper;
 
 const state = {
     coords: [],
@@ -20,7 +20,7 @@ const state = {
 };
 
 
-const renderContent = (photos) =>
+const renderContent = photos =>
     photos
         .map(element => `
             <div class="image">
@@ -28,7 +28,7 @@ const renderContent = (photos) =>
                 <a href="${element.src_big}" target="_blank">
                     ${moment(element.created * 1000).format('L')}
                 </a>
-            </div>`
+            </div>`,
         )
         .join('');
 
@@ -69,7 +69,9 @@ const updateMyPlacemark = (coords) => {
 
 
 const update = ({ coords = state.coords, count = 50, radius = 1000, offset = state.offset }) => {
-    updateMyPlacemark(coords);
+    if (coords !== state.coords) {
+        updateMyPlacemark(coords);
+    }
     if (offset === 0) {
         updatePhotoWrapper('');
         state.offset = 0;
@@ -104,12 +106,12 @@ const init = () => {
 
 
     // ставим метку и грузим фотографии, когда карта загрузилась
-    const coords = MAP_CENTER;
-    myPlacemark = createPlacemark(coords);
+    myPlacemark = createPlacemark(MAP_CENTER);
     myMap.geoObjects.add(myPlacemark);
-    update({ coords });
+    update({ coords: MAP_CENTER });
 
 
+    // обработчики событий
     myMap.events.add('click', (e) => {
         update({ coords: e.get('coords'), offset: 0 });
     });
@@ -118,6 +120,7 @@ const init = () => {
     myPlacemark.events.add('dragend', () => {
         update({ coords: myPlacemark.geometry.getCoordinates(), offset: 0 });
     });
+
 
     photoWrapper.addEventListener('scroll', () => {
         if (photoWrapper.scrollTop + photoWrapper.clientHeight >= photoWrapper.scrollHeight) {
