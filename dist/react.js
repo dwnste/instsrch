@@ -7,10 +7,9 @@ import { getPhotos, createPlacemark, getGeoObject } from '../lib';
 
 moment.locale('ru');
 
-const MAP_CENTER = [55.753994, 37.622093];
+let myPlacemark;
 
-let myPlacemark,
-    myMap;
+const MAP_CENTER = [55.753994, 37.622093];
 
 const updateMyPlacemark = (coords) => {
     myPlacemark.geometry
@@ -80,27 +79,32 @@ class App extends Component {
             });
         }
     }
-
     render() {
-        const loader = <div className="loader">Loading ...</div>;
-        const items = this.state.photos.map((photo, i) =>
-                <div className="image" key={i}>
-                    <img src={photo.src} />
-                    <a href={photo.src_big} target="_blank">
-                        {moment(photo.created * 1000).format('L')}
-                    </a>
-                </div>,
-        );
+        class Image extends Component {
+            render() {
+                return <div className="image">
+                            <img src={this.props.photo.src} />
+                            <a href={this.props.photo.src_big} target="_blank">
+                                {moment(this.props.photo.created * 1000).format('L')}
+                            </a>
+                        </div>;
+            }
+        }
+        class Loader extends Component {
+            render() {
+                return <div className="loader">Loading ...</div>;
+            }
+        }
         return <InfiniteScroll
-                    pageStart={0}
-                    loadMore={this.loadItems.bind(this)}
-                    hasMore={this.state.hasMoreItems}
-                    loader={loader}
-                    useWindow={false}>
-                    <div style={{ overflowAnchor: 'none' }, {overflow: 'auto'}}>
-                        {items}
-                    </div>
-                </InfiniteScroll>;
+            pageStart={0}
+            loadMore={this.loadItems.bind(this)}
+            hasMore={this.state.hasMoreItems}
+            loader={<Loader />}
+            useWindow={false}>
+            <div style={{ overflowAnchor: 'none' }, {overflow: 'auto'}}>
+                {this.state.photos.map((photo, i) => <Image photo={photo} key={i} />)}
+            </div>
+        </InfiniteScroll>;
     }
     componentDidMount() {
         ymaps.ready(() => {
