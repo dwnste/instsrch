@@ -33,6 +33,10 @@ a {
     overflow:auto;
 }
 
+#content {
+    @extend #photoWrap;
+}
+
 .image {
     width: 100px;
     height: 100px;
@@ -40,4 +44,8 @@ a {
     padding: 0 0 0 0;
     position: relative;
     float: left;
+}
+
+.loader {
+    color: #fff;
 }
