@@ -38,36 +38,6 @@ class App extends Component {
         };
     }
 
-    loadItems(page) {
-        const self = this;
-            getPhotos({ ...this.state })
-                .then((resp) => {
-                    if (resp.photos) {
-                        const photos = self.state.photos;
-                        resp.photos.map((photo) => {
-                            photos.push(photo);
-                        });
-                        this.setState({
-                            offset: this.state.offset + this.state.count,
-                            available: resp.photosAvailable,
-                        });
-                    }
-                });
-    }
-
-    render() {
-        return <InfiniteScroll
-            pageStart={0}
-            loadMore={this.loadItems.bind(this)}
-            hasMore={this.state.offset <= this.state.available}
-            loader={<Loader />}
-            useWindow={false}>
-            <div style={{ overflowAnchor: 'none' }, {overflow: 'auto'}}>
-                {this.state.photos.map((photo, i) => <Photo photo={photo} key={i} />)}
-            </div>
-        </InfiniteScroll>;
-    }
-
     componentDidMount() {
         ymaps.ready(() => {
             let myPlacemark;
@@ -104,9 +74,40 @@ class App extends Component {
             });
         });
     }
+
     componentWillUnmount() {
         this.myMap.events.remove('click', this.mapClickHandler);
         this.myMap.destroy();
+    }
+
+    loadItems(page) {
+        const self = this;
+            getPhotos({ ...this.state })
+                .then((resp) => {
+                    if (resp.photos) {
+                        const photos = self.state.photos;
+                        resp.photos.map((photo) => {
+                            photos.push(photo);
+                        });
+                        this.setState({
+                            offset: this.state.offset + this.state.count,
+                            available: resp.photosAvailable,
+                        });
+                    }
+                });
+    }
+
+    render() {
+        return <InfiniteScroll
+            pageStart={0}
+            loadMore={this.loadItems.bind(this)}
+            hasMore={this.state.offset <= this.state.available}
+            loader={<Loader />}
+            useWindow={false}>
+            <div style={{ overflowAnchor: 'none' }, {overflow: 'auto'}}>
+                {this.state.photos.map((photo, i) => <Photo photo={photo} key={i} />)}
+            </div>
+        </InfiniteScroll>;
     }
 }
 
