@@ -7,8 +7,6 @@ import { getPhotos, createPlacemark, updateMyPlacemark } from '../lib';
 
 moment.locale('ru');
 
-let myPlacemark;
-
 const MAP_CENTER = [55.753994, 37.622093];
 
 
@@ -22,6 +20,7 @@ class Photo extends Component {
                 </div>;
     }
 }
+
 
 class Loader extends Component {
     render() {
@@ -73,8 +72,10 @@ class App extends Component {
             </div>
         </InfiniteScroll>;
     }
+
     componentDidMount() {
         ymaps.ready(() => {
+            let myPlacemark;
             // инициализация карты
             this.myMap = new ymaps.Map('map', {
                 center: MAP_CENTER,
@@ -117,4 +118,4 @@ class App extends Component {
 ReactDOM.render(
     <App />,
     document.getElementById('content'),
-    );
+);
