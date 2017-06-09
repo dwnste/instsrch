@@ -138,7 +138,8 @@ class App extends Component {
         });
     }
     componentWillUnmount() {
-        window.removeEventListener('click', this.myMap.bind(this));
+        this.myMap.events.remove('click', this.mapClickHandler);
+        this.myMap.destroy();
     }
 }
 
