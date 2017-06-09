@@ -69,12 +69,10 @@ const updateMyPlacemark = (coords) => {
 
 
 const update = ({ coords = state.coords, count = 50, radius = 1000, offset = state.offset }) => {
-    if (coords !== state.coords) {
-        updateMyPlacemark(coords);
-    }
     if (offset === 0) {
         updatePhotoWrapper('');
         state.offset = 0;
+        updateMyPlacemark(coords);
     }
 
     if (state.offset <= state.photosAvailable) {
