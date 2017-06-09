@@ -91,43 +91,41 @@ class App extends Component {
                     </a>
                 </div>,
         );
-        return (
-            <InfiniteScroll
-                pageStart={0}
-                loadMore={this.loadItems.bind(this)}
-                hasMore={this.state.hasMoreItems}
-                loader={loader}
-                useWindow={true}>
-                
-                {items}
-            </InfiniteScroll>
-        );
+        return <InfiniteScroll
+                    pageStart={0}
+                    loadMore={this.loadItems.bind(this)}
+                    hasMore={this.state.hasMoreItems}
+                    loader={loader}
+                    useWindow={false}>
+                    <div style={{ overflowAnchor: 'none' }, {overflow: 'auto'}}>
+                        {items}
+                    </div>
+                </InfiniteScroll>;
     }
     componentDidMount() {
         ymaps.ready(() => {
             // инициализация карты
-            myMap = new ymaps.Map('map', {
+            this.myMap = new ymaps.Map('map', {
                 center: MAP_CENTER,
                 zoom: 9,
             }, {
                 searchControlProvider: 'yandex#search',
             });
 
-
-            // ставим метку и грузим фотографии, когда карта загрузилась
-            const coords = MAP_CENTER;
-            myPlacemark = createPlacemark(coords);
-            myMap.geoObjects.add(myPlacemark);
-            updateMyPlacemark(coords);
-
-
-            myMap.events.add('click', (e) => {
+            this.mapClickHandler = (e) => {
                 const coords = e.get('coords');
                 updateMyPlacemark(coords);
                 this.setState({
                     coords, offset: 0, photos: [],
                 });
-            });
+            };
+
+            this.myMap.events.add('click', this.mapClickHandler);
+            // ставим метку и грузим фотографии, когда карта загрузилась
+            const coords = MAP_CENTER;
+            myPlacemark = createPlacemark(coords);
+            this.myMap.geoObjects.add(myPlacemark);
+            updateMyPlacemark(coords);
 
 
             myPlacemark.events.add('dragend', () => {
@@ -138,6 +136,9 @@ class App extends Component {
                 });
             });
         });
+    }
+    componentWillUnmount() {
+        window.removeEventListener('click', this.myMap.bind(this));
     }
 }
 
