@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import InfiniteScroll from 'react-infinite-scroller';
 import moment from 'moment';
 import {getPhotos, createPlacemark, getGeoObject} from '../lib';
 
@@ -23,7 +24,8 @@ const updateMyPlacemark = (coords) => {
                 .set({
                     // Формируем строку с данными об объекте.
                     iconCaption: [
-                        // Название населенного пункта или вышестоящее административно-территориальное образование.
+                        /* Название населенного пункта или
+                        вышестоящее административно-территориальное образование. */
                         firstGeoObject.getLocalities().length
                             ? firstGeoObject.getLocalities()
                             : firstGeoObject.getAdministrativeAreas(),
@@ -41,7 +43,7 @@ const updateMyPlacemark = (coords) => {
 
 
 const update = ({ coords, count = 50, radius = 1000, offset = 0 }) => {
-
+    getPhotos({});
 };
 
 const init = () => {

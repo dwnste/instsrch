@@ -1,7 +1,7 @@
 import style from './style.scss'
 import moment from 'moment'
 import ymaps from 'ymaps'
-import {getPhotos, createPlacemark, getGeoObject} from '../lib'
+import { getPhotos, createPlacemark, getGeoObject } from '../lib';
 
 moment.locale('ru');
 
@@ -13,39 +13,70 @@ let myPlacemark,
         myMap,
         photoWrapper
 
-let state = {
+const state = {
     coords: [],
     photosAvailable: 0,
-    offset: 0
+    offset: 0,
 };
 
 
 const renderContent = (photos) =>
     photos
-        .map(element=>`
+        .map(element => `
             <div class="image">
                 <img src="${element.src}"/>
                 <a href="${element.src_big}" target="_blank">
-                    ${moment(element.created*1000).format('L')}
+                    ${moment(element.created * 1000).format('L')}
                 </a>
             </div>`
         )
         .join('');
 
 
-
 const updatePhotoWrapper = (content) => {
     photoWrapper.innerHTML = content ? photoWrapper.innerHTML + content : '';
-}
+};
 
 
-const update = ({coords = state.coords, count = 50, radius = 1000, offset = state.offset}) => {
+// Обновление позиции и текста метки
+const updateMyPlacemark = (coords) => {
+    myPlacemark.geometry
+        .setCoordinates(coords);
+    myPlacemark.properties
+        .set('iconCaption', 'поиск...');
+    getGeoObject(coords)
+        .then(firstGeoObject =>
+            myPlacemark.properties
+                .set({
+                    // Формируем строку с данными об объекте.
+                    iconCaption: [
+                        /* Название населенного пункта или
+                        вышестоящее административно-территориальное образование. */
+                        firstGeoObject.getLocalities().length
+                            ? firstGeoObject.getLocalities()
+                            : firstGeoObject.getAdministrativeAreas(),
+                        /* Получаем путь до топонима, если метод вернул null,
+                        запрашиваем наименование здания. */
+                        firstGeoObject.getThoroughfare()
+                        || firstGeoObject.getPremise(),
+                    ].filter(Boolean)
+                     .join(', '),
+                    // В качестве контента балуна задаем строку с адресом объекта.
+                    balloonContent: firstGeoObject.getAddressLine(),
+                }),
+    );
+};
 
-    state.offset = offset === 0 ? 0 : state.offset;
+
+const update = ({ coords = state.coords, count = 50, radius = 1000, offset = state.offset }) => {
+    updateMyPlacemark(coords);
+    if (offset === 0) {
+        updatePhotoWrapper('');
+        state.offset = 0;
+    }
 
     if (state.offset <= state.photosAvailable) {
-
-        getPhotos({...state, coords, count, radius, offset}).then(photoResponse=>{
+        getPhotos({ ...state, coords, count, radius, offset }).then((photoResponse) => {
             state.photosAvailable = photoResponse.photosAvailable;
             updatePhotoWrapper(renderContent(photoResponse.photos));
 
@@ -57,34 +88,8 @@ const update = ({coords = state.coords, count = 50, radius = 1000, offset = stat
             }
         });
     }
-}
+};
 
-// Обновление позиции и текста метки
-const updateMyPlacemark = (coords) => {
-    myPlacemark.geometry
-        .setCoordinates(coords);
-    myPlacemark.properties
-        .set('iconCaption', 'поиск...');
-    getGeoObject(coords)
-        .then( firstGeoObject =>
-            myPlacemark.properties
-                .set({
-                    // Формируем строку с данными об объекте.
-                    iconCaption: [
-                        // Название населенного пункта или вышестоящее административно-территориальное образование.
-                        firstGeoObject.getLocalities().length
-                            ? firstGeoObject.getLocalities()
-                            : firstGeoObject.getAdministrativeAreas(),
-                        // Получаем путь до топонима, если метод вернул null, запрашиваем наименование здания.
-                        firstGeoObject.getThoroughfare()
-                        || firstGeoObject.getPremise()
-                    ].filter(Boolean)
-                     .join(', '),
-                    // В качестве контента балуна задаем строку с адресом объекта.
-                    balloonContent: firstGeoObject.getAddressLine()
-                })
-    );
-}
 
 const init = () => {
     photoWrapper = document.getElementById('photoWrap');
@@ -92,9 +97,9 @@ const init = () => {
     // инициализация карты
     myMap = new ymaps.Map('map', {
         center: MAP_CENTER,
-        zoom: 9
+        zoom: 9,
     }, {
-        searchControlProvider: 'yandex#search'
+        searchControlProvider: 'yandex#search',
     });
 
 
@@ -102,29 +107,16 @@ const init = () => {
     const coords = MAP_CENTER;
     myPlacemark = createPlacemark(coords);
     myMap.geoObjects.add(myPlacemark);
-    updateMyPlacemark(coords);
-    update({coords});
+    update({ coords });
 
 
     myMap.events.add('click', (e) => {
-        const coords = e.get('coords');
-        updateMyPlacemark(coords);
-        updatePhotoWrapper('');
-
-        const offset = 0;
-        update({coords, offset});
-
+        update({ coords: e.get('coords'), offset: 0 });
     });
 
 
     myPlacemark.events.add('dragend', () => {
-        const coords = myPlacemark.geometry.getCoordinates();
-        updateMyPlacemark(coords);
-        updatePhotoWrapper('');
-
-        const offset = 0;
-        update({coords, offset});
-
+        update({ coords: myPlacemark.geometry.getCoordinates(), offset: 0 });
     });
 
     photoWrapper.addEventListener('scroll', () => {
@@ -132,9 +124,7 @@ const init = () => {
             update({});
         }
     });
-
-
-}
+};
 
 
 ymaps.ready(init);
