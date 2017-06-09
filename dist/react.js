@@ -131,7 +131,8 @@ class App extends Component {
 
 
             myPlacemark.events.add('dragend', () => {
-                updateMyPlacemark(myPlacemark.geometry.getCoordinates());
+                const coords = myPlacemark.geometry.getCoordinates();
+                updateMyPlacemark(coords);
                 this.setState({
                     coords, offset: 0, photos: [], hasMoreItems: true,
                 });
