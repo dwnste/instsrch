@@ -39,6 +39,25 @@ const updateMyPlacemark = (coords) => {
     );
 };
 
+
+class Photo extends Component {
+    render() {
+        return <div className="image">
+                    <img src={this.props.photo.src} />
+                    <a href={this.props.photo.src_big} target="_blank">
+                        {moment(this.props.photo.created * 1000).format('L')}
+                    </a>
+                </div>;
+    }
+}
+
+class Loader extends Component {
+    render() {
+        return <div className="loader">Loading ...</div>;
+    }
+}
+
+
 class App extends Component {
     constructor(...props) {
         super(...props);
@@ -80,21 +99,6 @@ class App extends Component {
         }
     }
     render() {
-        class Image extends Component {
-            render() {
-                return <div className="image">
-                            <img src={this.props.photo.src} />
-                            <a href={this.props.photo.src_big} target="_blank">
-                                {moment(this.props.photo.created * 1000).format('L')}
-                            </a>
-                        </div>;
-            }
-        }
-        class Loader extends Component {
-            render() {
-                return <div className="loader">Loading ...</div>;
-            }
-        }
         return <InfiniteScroll
             pageStart={0}
             loadMore={this.loadItems.bind(this)}
@@ -102,7 +106,7 @@ class App extends Component {
             loader={<Loader />}
             useWindow={false}>
             <div style={{ overflowAnchor: 'none' }, {overflow: 'auto'}}>
-                {this.state.photos.map((photo, i) => <Image photo={photo} key={i} />)}
+                {this.state.photos.map((photo, i) => <Photo photo={photo} key={i} />)}
             </div>
         </InfiniteScroll>;
     }
