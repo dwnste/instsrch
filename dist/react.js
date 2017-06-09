@@ -68,16 +68,13 @@ class App extends Component {
             coords: MAP_CENTER,
             offset: 0,
             count: 50,
+            radius: 1000,
         };
     }
 
     loadItems(page) {
         const self = this;
-            getPhotos({
-                coords: this.state.coords,
-                count: this.state.count,
-                radius: 1000,
-                offset: this.state.offset })
+            getPhotos({ ...this.state })
                 .then((resp) => {
                     if (resp.photos) {
                         const photos = self.state.photos;
