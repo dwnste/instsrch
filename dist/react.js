@@ -116,7 +116,7 @@ class App extends Component {
                 const coords = e.get('coords');
                 updateMyPlacemark(coords);
                 this.setState({
-                    coords, offset: 0, photos: [],
+                    coords, offset: 0, photos: [], hasMoreItems: true,
                 });
             };
 
@@ -132,7 +132,7 @@ class App extends Component {
                 const coords = myPlacemark.geometry.getCoordinates();
                 updateMyPlacemark(coords);
                 this.setState({
-                    coords, offset: 0, photos: [],
+                    coords, offset: 0, photos: [], hasMoreItems: true,
                 });
             });
         });
