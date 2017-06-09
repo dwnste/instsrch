@@ -1,6 +1,12 @@
 {
   "parser": "babel-eslint",
+  "extends": ["airbnb-base"],
+  "plugins": [
+    "react",
+    "jsx-a11y"
+              ],
   "rules": {
-    "strict": 0
+    "strict": 0,
+    "indent": [2, 4]
   }
 }

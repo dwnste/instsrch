@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import moment from 'moment'
-import {getPhotos, createPlacemark, getGeoObject} from '../lib'
+import moment from 'moment';
+import {getPhotos, createPlacemark, getGeoObject} from '../lib';
 
 moment.locale('ru');
 
@@ -18,7 +18,7 @@ const updateMyPlacemark = (coords) => {
     myPlacemark.properties
         .set('iconCaption', 'поиск...');
     getGeoObject(coords)
-        .then( firstGeoObject =>
+        .then(firstGeoObject =>
             myPlacemark.properties
                 .set({
                     // Формируем строку с данными об объекте.
@@ -27,16 +27,22 @@ const updateMyPlacemark = (coords) => {
                         firstGeoObject.getLocalities().length
                             ? firstGeoObject.getLocalities()
                             : firstGeoObject.getAdministrativeAreas(),
-                        // Получаем путь до топонима, если метод вернул null, запрашиваем наименование здания.
+                        /* Получаем путь до топонима, если метод вернул null,
+                         запрашиваем наименование здания. */
                         firstGeoObject.getThoroughfare()
-                        || firstGeoObject.getPremise()
+                        || firstGeoObject.getPremise(),
                     ].filter(Boolean)
                      .join(', '),
                     // В качестве контента балуна задаем строку с адресом объекта.
                     balloonContent: firstGeoObject.getAddressLine()
-                })
+                }),
     );
-}
+};
+
+
+const update = ({ coords, count = 50, radius = 1000, offset = 0 }) => {
+
+};
 
 const init = () => {
     photoWrapper = document.getElementById('photoWrap');
@@ -44,9 +50,9 @@ const init = () => {
     // инициализация карты
     myMap = new ymaps.Map('map', {
         center: MAP_CENTER,
-        zoom: 9
+        zoom: 9,
     }, {
-        searchControlProvider: 'yandex#search'
+        searchControlProvider: 'yandex#search',
     });
 
 
@@ -60,15 +66,12 @@ const init = () => {
     myMap.events.add('click', (e) => {
         const coords = e.get('coords');
         updateMyPlacemark(coords);
-
-
     });
 
 
     myPlacemark.events.add('dragend', () => {
         const coords = myPlacemark.geometry.getCoordinates();
         updateMyPlacemark(coords);
-
     });
 
     photoWrapper.addEventListener('scroll', () => {
@@ -76,8 +79,6 @@ const init = () => {
             update({});
         }
     });
-
-
-}
+};
 
 ymaps.ready(init);
