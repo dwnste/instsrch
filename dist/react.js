@@ -10,22 +10,17 @@ moment.locale('ru');
 const MAP_CENTER = [55.753994, 37.622093];
 
 
-class Photo extends Component {
-    render() {
-        return <div className="image">
-                    <img src={this.props.photo.src} />
-                    <a href={this.props.photo.src_big} target="_blank">
-                        {moment(this.props.photo.created * 1000).format('L')}
-                    </a>
-                </div>;
-    }
+function Photo(props) {
+    return <div className="image">
+                <img src={props.photo.src} />
+                <a href={props.photo.src_big} target="_blank">
+                    {moment(props.photo.created * 1000).format('L')}
+                </a>
+            </div>;
 }
 
-
-class Loader extends Component {
-    render() {
+function Loader() {
         return <div className="loader">Loading ...</div>;
-    }
 }
 
 
