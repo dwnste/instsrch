@@ -14,6 +14,7 @@ class App extends Component {
         super(props);
 
         this.state = {
+            available: 0,
             photos: [],
             hasMoreItems: true,
             nextHref: null,
@@ -93,20 +94,29 @@ class App extends Component {
 
     loadItems(page) {
         const self = this;
-
-        getPhotos({ coords: this.state.coords, count: this.state.count, radius: 1000, offset: this.state.offset })
-            .then((resp) => {
-                if (resp.photos) {
-                    const photos = self.state.photos;
-                    resp.photos.map((photo) => {
-
-                        photos.push(photo);
-                    });
-                    this.setState({
-                        offset: this.state.offset + this.state.count,
-                    });
-                }
+        if (this.state.offset <= this.state.available) {
+            getPhotos({
+                coords: this.state.coords,
+                count: this.state.count,
+                radius: 1000,
+                offset: this.state.offset })
+                .then((resp) => {
+                    if (resp.photos) {
+                        const photos = self.state.photos;
+                        resp.photos.map((photo) => {
+                            photos.push(photo);
+                        });
+                        this.setState({
+                            offset: this.state.offset + this.state.count,
+                            available: resp.photosAvailable,
+                        });
+                    }
+                });
+        } else {
+            this.setState({
+                hasMoreItems: false,
             });
+        }
     }
 
     render() {
@@ -119,13 +129,13 @@ class App extends Component {
                     </a>
                 </div>,
         );
-        console.log(items)
         return (
             <InfiniteScroll
                 pageStart={0}
                 loadMore={this.loadItems.bind(this)}
                 hasMore={this.state.hasMoreItems}
-                loader={loader}>
+                loader={loader}
+                useWindow={false}>
 
                 
                 {items}
