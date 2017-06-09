@@ -17,7 +17,6 @@ class App extends Component {
             available: 0,
             photos: [],
             hasMoreItems: true,
-            nextHref: null,
             coords: MAP_CENTER,
             offset: 0,
             count: 50,

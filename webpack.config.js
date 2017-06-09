@@ -8,8 +8,8 @@ module.exports = {
             path.join(__dirname, './dist/index.js'),
         ],
         react: [
-            path.join(__dirname, './dist/react.jsx')
-        ]
+            path.join(__dirname, './dist/react.js'),
+        ],
     },
     output: {
         path: path.join(__dirname, './dist/'),
@@ -17,8 +17,8 @@ module.exports = {
         filename: '[name].js',
     },
     externals: {
-        ymaps: "ymaps",
-        jquery: "jQuery"
+        ymaps: 'ymaps',
+        jquery: 'jQuery',
     },
     module: {
         rules: [
@@ -26,30 +26,25 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /(node_modules)/,
                 loader: 'babel-loader',
+                query: {
+                    presets: ['env', 'react'],
+                },
             },
             {
                 test: /\.scss$/,
                 loader: ExtractTextPlugin.extract({
-                    fallbackLoader: 'style-loader', loader: 'css-loader!sass-loader'
-                })
+                    fallbackLoader: 'style-loader', loader: 'css-loader!sass-loader',
+                }),
             },
-            {
-                test: /\.jsx$/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['env', 'react']
-                },
-                exclude: /node_modules/
-            }
         ],
     },
     plugins: [
-        new ExtractTextPlugin("style.css")
+        new ExtractTextPlugin('style.css'),
     ],
     devtool: 'source-map',
     devServer: {
         host: '0.0.0.0',
-        publicPath: "/",
-        contentBase: "./dist"
-    }
+        publicPath: '/',
+        contentBase: './dist',
+    },
 };
