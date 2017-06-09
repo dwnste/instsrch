@@ -3,41 +3,13 @@ import ReactDOM from 'react-dom';
 import InfiniteScroll from 'react-infinite-scroller';
 import moment from 'moment';
 import ymaps from 'ymaps';
-import { getPhotos, createPlacemark, getGeoObject } from '../lib';
+import { getPhotos, createPlacemark, updateMyPlacemark } from '../lib';
 
 moment.locale('ru');
 
 let myPlacemark;
 
 const MAP_CENTER = [55.753994, 37.622093];
-
-const updateMyPlacemark = (coords) => {
-    myPlacemark.geometry
-        .setCoordinates(coords);
-    myPlacemark.properties
-        .set('iconCaption', 'поиск...');
-    getGeoObject(coords)
-        .then(firstGeoObject =>
-            myPlacemark.properties
-                .set({
-                    // Формируем строку с данными об объекте.
-                    iconCaption: [
-                        /* Название населенного пункта или
-                        вышестоящее административно-территориальное образование. */
-                        firstGeoObject.getLocalities().length
-                            ? firstGeoObject.getLocalities()
-                            : firstGeoObject.getAdministrativeAreas(),
-                        /* Получаем путь до топонима, если метод вернул null,
-                        запрашиваем наименование здания. */
-                        firstGeoObject.getThoroughfare()
-                        || firstGeoObject.getPremise(),
-                    ].filter(Boolean)
-                    .join(', '),
-                    // В качестве контента балуна задаем строку с адресом объекта.
-                    balloonContent: firstGeoObject.getAddressLine(),
-                }),
-    );
-};
 
 
 class Photo extends Component {
@@ -113,7 +85,7 @@ class App extends Component {
 
             this.mapClickHandler = (e) => {
                 const coords = e.get('coords');
-                updateMyPlacemark(coords);
+                updateMyPlacemark(coords, myPlacemark);
                 this.setState({
                     coords, offset: 0, photos: []
                 });
@@ -124,12 +96,12 @@ class App extends Component {
             const coords = MAP_CENTER;
             myPlacemark = createPlacemark(coords);
             this.myMap.geoObjects.add(myPlacemark);
-            updateMyPlacemark(coords);
+            updateMyPlacemark(coords, myPlacemark);
 
 
             myPlacemark.events.add('dragend', () => {
                 const coords = myPlacemark.geometry.getCoordinates();
-                updateMyPlacemark(coords);
+                updateMyPlacemark(coords, myPlacemark);
                 this.setState({
                     coords, offset: 0, photos: [],
                 });

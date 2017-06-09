@@ -1,7 +1,7 @@
 import style from './style.scss'
 import moment from 'moment'
 import ymaps from 'ymaps'
-import { getPhotos, createPlacemark, getGeoObject } from '../lib';
+import { getPhotos, createPlacemark, updateMyPlacemark } from '../lib';
 
 moment.locale('ru');
 
@@ -38,41 +38,11 @@ const updatePhotoWrapper = (content) => {
 };
 
 
-// Обновление позиции и текста метки
-const updateMyPlacemark = (coords) => {
-    myPlacemark.geometry
-        .setCoordinates(coords);
-    myPlacemark.properties
-        .set('iconCaption', 'поиск...');
-    getGeoObject(coords)
-        .then(firstGeoObject =>
-            myPlacemark.properties
-                .set({
-                    // Формируем строку с данными об объекте.
-                    iconCaption: [
-                        /* Название населенного пункта или
-                        вышестоящее административно-территориальное образование. */
-                        firstGeoObject.getLocalities().length
-                            ? firstGeoObject.getLocalities()
-                            : firstGeoObject.getAdministrativeAreas(),
-                        /* Получаем путь до топонима, если метод вернул null,
-                        запрашиваем наименование здания. */
-                        firstGeoObject.getThoroughfare()
-                        || firstGeoObject.getPremise(),
-                    ].filter(Boolean)
-                     .join(', '),
-                    // В качестве контента балуна задаем строку с адресом объекта.
-                    balloonContent: firstGeoObject.getAddressLine(),
-                }),
-    );
-};
-
-
 const update = ({ coords = state.coords, count = 50, radius = 1000, offset = state.offset }) => {
     if (offset === 0) {
         updatePhotoWrapper('');
         state.offset = 0;
-        updateMyPlacemark(coords);
+        updateMyPlacemark(coords, myPlacemark);
     }
 
     if (state.offset <= state.photosAvailable) {
