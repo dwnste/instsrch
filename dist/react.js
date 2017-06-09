@@ -65,7 +65,6 @@ class App extends Component {
         this.state = {
             available: 0,
             photos: [],
-            hasMoreItems: true,
             coords: MAP_CENTER,
             offset: 0,
             count: 50,
@@ -74,7 +73,6 @@ class App extends Component {
 
     loadItems(page) {
         const self = this;
-        if (this.state.offset <= this.state.available) {
             getPhotos({
                 coords: this.state.coords,
                 count: this.state.count,
@@ -92,17 +90,13 @@ class App extends Component {
                         });
                     }
                 });
-        } else {
-            this.setState({
-                hasMoreItems: false,
-            });
-        }
     }
+
     render() {
         return <InfiniteScroll
             pageStart={0}
             loadMore={this.loadItems.bind(this)}
-            hasMore={this.state.hasMoreItems}
+            hasMore={this.state.offset <= this.state.available}
             loader={<Loader />}
             useWindow={false}>
             <div style={{ overflowAnchor: 'none' }, {overflow: 'auto'}}>
@@ -137,8 +131,7 @@ class App extends Component {
 
 
             myPlacemark.events.add('dragend', () => {
-                const coords = myPlacemark.geometry.getCoordinates();
-                updateMyPlacemark(coords);
+                updateMyPlacemark(myPlacemark.geometry.getCoordinates());
                 this.setState({
                     coords, offset: 0, photos: [], hasMoreItems: true,
                 });
