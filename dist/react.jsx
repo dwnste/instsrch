@@ -18,6 +18,8 @@ class App extends Component {
             hasMoreItems: true,
             nextHref: null,
             coords: MAP_CENTER,
+            offset: 0,
+            count: 50,
         };
 
         let myPlacemark,
@@ -72,7 +74,7 @@ class App extends Component {
                 const coords = e.get('coords');
                 updateMyPlacemark(coords);
                 this.setState({
-                    coords,
+                    coords, offset: 0, photos: [],
                 });
             });
 
@@ -81,7 +83,7 @@ class App extends Component {
                 const coords = myPlacemark.geometry.getCoordinates();
                 updateMyPlacemark(coords);
                 this.setState({
-                    coords,
+                    coords, offset: 0, photos: [],
                 });
             });
         };
@@ -92,13 +94,16 @@ class App extends Component {
     loadItems(page) {
         const self = this;
 
-        getPhotos({ coords: MAP_CENTER, count: 50, radius: 1000, offset: 0 })
+        getPhotos({ coords: this.state.coords, count: this.state.count, radius: 1000, offset: this.state.offset })
             .then((resp) => {
                 if (resp.photos) {
                     const photos = self.state.photos;
                     resp.photos.map((photo) => {
 
                         photos.push(photo);
+                    });
+                    this.setState({
+                        offset: this.state.offset + this.state.count,
                     });
                 }
             });
