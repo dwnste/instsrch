@@ -90,7 +90,6 @@ class App extends Component {
     }
 
     render() {
-        console.log(this.state.photos)
         return <InfiniteScroll
             pageStart={0}
             loadMore={this.loadItems.bind(this)}
