@@ -25,17 +25,13 @@ function Loader() {
 
 
 class App extends Component {
-    constructor(...props) {
-        super(...props);
-
-        this.state = {
-            available: 0,
-            photos: [],
-            coords: MAP_CENTER,
-            offset: 0,
-            count: 50,
-            radius: 1000,
-        };
+    state = {
+        available: 0,
+        photos: [],
+        coords: MAP_CENTER,
+        offset: 0,
+        count: 50,
+        radius: 1000,
     }
 
     componentDidMount() {
