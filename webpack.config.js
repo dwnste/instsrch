@@ -18,7 +18,6 @@ module.exports = {
     },
     externals: {
         ymaps: 'ymaps',
-        jquery: 'jQuery',
     },
     module: {
         rules: [
