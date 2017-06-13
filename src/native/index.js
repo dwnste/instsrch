@@ -1,7 +1,7 @@
-import style from './style.scss'
+import style from 'style'
 import moment from 'moment'
 import ymaps from 'ymaps'
-import { getPhotos, createPlacemark, updateMyPlacemark } from '../lib';
+import { getPhotos, createPlacemark, updateMyPlacemark } from 'lib';
 
 moment.locale('ru');
 

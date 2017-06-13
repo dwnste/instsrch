@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import InfiniteScroll from 'react-infinite-scroller';
 import moment from 'moment';
 import ymaps from 'ymaps';
-import { getPhotos, createPlacemark, updateMyPlacemark } from '../lib';
+import { getPhotos, createPlacemark, updateMyPlacemark } from 'lib';
 
 moment.locale('ru');
 
@@ -81,20 +81,19 @@ class App extends Component {
     }
 
     loadItems(page) {
-        const self = this;
-            getPhotos({ ...this.state })
-                .then((resp) => {
-                    if (resp.photos) {
-                        const photos = self.state.photos;
-                        resp.photos.map((photo) => {
-                            photos.push(photo);
-                        });
-                        this.setState({
-                            offset: this.state.offset + this.state.count,
-                            available: resp.photosAvailable,
-                        });
-                    }
-                });
+        getPhotos({ ...this.state })
+            .then((resp) => {
+                if (resp.photos) {
+                    resp.photos.map((photo) => {
+                        this.state.photos.push(photo);
+                    });
+
+                    this.setState({
+                        offset: this.state.offset + this.state.count,
+                        available: resp.photosAvailable,
+                    });
+                }
+            });
     }
 
     render() {
