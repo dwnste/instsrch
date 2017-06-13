@@ -20,7 +20,7 @@ function Photo(props) {
 }
 
 function Loader() {
-        return <div className="loader">Loading ...</div>;
+    return <div className="loader">Loading ...</div>;
 }
 
 

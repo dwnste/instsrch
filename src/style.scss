@@ -5,28 +5,6 @@ html, body {
   margin: 0; padding: 0;  /* to avoid scrollbars */
 }
 
-a { 
-    color: white; 
-    font: bold 12px Helvetica, Sans-Serif; 
-    letter-spacing: -1px;
-    text-decoration: none;  
-    background: rgba(0, 0, 0, 0.5);
-    padding: 5px; 
-    position: absolute; 
-    bottom: 0px; 
-    left: 0; 
-    width: 100%; 
-}
-
-img {
-    margin: auto;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
 #map {
     width: 100%;
     height: $map-height;
@@ -46,6 +24,24 @@ img {
     @extend #photoWrap;
 }
 
+.menu {
+    width: 100%;
+    padding-top: 10%;
+    .menu__element {
+        width: 200px;
+        margin: 0 auto;
+        a {
+            font: bold 30px Helvetica, Sans-Serif;
+            text-decoration: none;
+            letter-spacing: 3px; 
+            color: #333;
+            &:hover {
+                text-decoration: underline;
+                text-decoration-style: dashed; 
+            } 
+        }
+    }
+}
 .image {
     width: 100px;
     height: 100px;
@@ -53,6 +49,26 @@ img {
     padding: 0 0 0 0;
     position: relative;
     float: left;
+    a { 
+        color: white; 
+        font: bold 12px Helvetica, Sans-Serif; 
+        letter-spacing: -1px;
+        text-decoration: none;  
+        background: rgba(0, 0, 0, 0.5);
+        padding: 5px; 
+        position: absolute; 
+        bottom: 0px; 
+        left: 0; 
+        width: 100%; 
+    }
+    img {
+        margin: auto;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
 }
 
 .loader {
