@@ -99,9 +99,9 @@ class App extends Component {
             hasMore={this.state.offset <= this.state.available}
             loader={<Loader />}
             useWindow={false}>
-            <div style={{ overflowAnchor: 'none' }, {overflow: 'auto'}}>
-                {this.state.photos.map((photo, i) => <Photo photo={photo} key={i} />)}
-            </div>
+                <div className="scroll_container">
+                    {this.state.photos.map((photo, i) => <Photo photo={photo} key={i} />)}
+                </div>
         </InfiniteScroll>;
     }
 }
