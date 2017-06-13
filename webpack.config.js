@@ -8,7 +8,7 @@ module.exports = {
             path.join(__dirname, './src/index.js'),
         ],
         react: [
-            path.join(__dirname, './src/react.js'),
+            path.join(__dirname, './src/react.jsx'),
         ],
     },
     output: {
@@ -23,6 +23,14 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/,
+                exclude: /(node_modules)/,
+                loader: 'babel-loader',
+                query: {
+                    presets: ['env', 'react'],
+                },
+            },
+            {
+                test: /\.jsx$/,
                 exclude: /(node_modules)/,
                 loader: 'babel-loader',
                 query: {
