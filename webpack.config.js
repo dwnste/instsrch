@@ -5,10 +5,10 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = {
     entry: {
         index: [
-            path.join(__dirname, './dist/index.js'),
+            path.join(__dirname, './src/index.js'),
         ],
         react: [
-            path.join(__dirname, './dist/react.js'),
+            path.join(__dirname, './src/react.js'),
         ],
     },
     output: {
@@ -45,6 +45,6 @@ module.exports = {
     devServer: {
         host: '0.0.0.0',
         publicPath: '/',
-        contentBase: './dist',
+        contentBase: './src',
     },
 };
