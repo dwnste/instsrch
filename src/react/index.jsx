@@ -19,6 +19,7 @@ function Photo(props) {
             </div>;
 }
 
+
 function Loader() {
     return <div className="loader">Loading ...</div>;
 }
@@ -76,7 +77,7 @@ class App extends Component {
         this.myMap.destroy();
     }
 
-    loadItems(page) {
+    loadItems() {
         getPhotos({ ...this.state })
             .then((resp) => {
                 if (resp.photos) {

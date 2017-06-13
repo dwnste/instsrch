@@ -22,6 +22,9 @@ html, body {
 
 #content {
     @extend #photoWrap;
+    .scroll_container {
+        overflow: auto;
+    }
 }
 
 .menu {
@@ -73,8 +76,4 @@ html, body {
 
 .loader {
     color: #fff;
-}
-
-.scroll_container {
-    overflow: auto;
 }
