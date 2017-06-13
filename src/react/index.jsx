@@ -35,9 +35,21 @@ class App extends Component {
         radius: 1000,
     }
 
+    update = (coords) => {
+        updateMyPlacemark(coords, this.myPlacemark);
+        this.setState({
+            coords, offset: 0, photos: []
+        });
+    }
+
+    myPlacemark;
+
+    mapClickHandler = (e) => {
+        this.update(e.get('coords'));
+    };
+
     componentDidMount() {
         ymaps.ready(() => {
-            let myPlacemark;
             // инициализация карты
             this.myMap = new ymaps.Map('map', {
                 center: MAP_CENTER,
@@ -46,28 +58,14 @@ class App extends Component {
                 searchControlProvider: 'yandex#search',
             });
 
-            this.mapClickHandler = (e) => {
-                const coords = e.get('coords');
-                updateMyPlacemark(coords, myPlacemark);
-                this.setState({
-                    coords, offset: 0, photos: []
-                });
-            };
-
             this.myMap.events.add('click', this.mapClickHandler);
             // ставим метку и грузим фотографии, когда карта загрузилась
-            const coords = MAP_CENTER;
-            myPlacemark = createPlacemark(coords);
-            this.myMap.geoObjects.add(myPlacemark);
-            updateMyPlacemark(coords, myPlacemark);
+            this.myPlacemark = createPlacemark(MAP_CENTER); // создаем метку
+            this.myMap.geoObjects.add(this.myPlacemark); // добавляем на карту
+            updateMyPlacemark(MAP_CENTER, this.myPlacemark); // обновляем текст метки
 
-
-            myPlacemark.events.add('dragend', () => {
-                const coords = myPlacemark.geometry.getCoordinates();
-                updateMyPlacemark(coords, myPlacemark);
-                this.setState({
-                    coords, offset: 0, photos: [],
-                });
+            this.myPlacemark.events.add('dragend', () => {
+                this.update(this.myPlacemark.geometry.getCoordinates());
             });
         });
     }
