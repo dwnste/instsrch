@@ -5,6 +5,7 @@ import moment from 'moment';
 import { Map, Marker } from 'yandex-map-react';
 import { getPhotos } from 'lib';
 
+
 moment.locale('ru');
 
 const MAP_CENTER = [55.753994, 37.622093];
@@ -23,6 +24,7 @@ function Photo(props) {
 function Loader() {
     return <div className="loader">Loading ...</div>;
 }
+
 
 class App extends Component {
     state = {
@@ -92,7 +94,7 @@ class App extends Component {
         return <div>
             <div id="map">
                 <Map onAPIAvailable={ (api) => { this.setState({ api }); this.updatePlacemark(MAP_CENTER); }}onClick={ e => this.onMapClick(e) } center={MAP_CENTER} width={'100%'} height={'270px'} zoom={10} state={{ controls: ['default'] }}>
-                    <Marker onDragend={ e => this.onPlacemarkDragend(e) } lat={ this.state.coords[0] } lon={ this.state.coords[1] } properties={{ iconCaption: this.state.iconCaption, balloonContent: this.state.balloonContent }} options={{ draggable: true, preset: 'islands#blackDotIconWithCaption' }} balloonState={this.state.balloonState} />
+                    <Marker onDragend={ e => this.onPlacemarkDragend(e) } lat={ this.state.coords[0] } lon={ this.state.coords[1] } properties={{ iconCaption: this.state.iconCaption, balloonContent: this.state.balloonContent }} options={{ draggable: true, preset: 'islands#blackDotIconWithCaption' }} />
                 </Map>
             </div>
             <div id="content">
@@ -110,6 +112,7 @@ class App extends Component {
         </div>;
     }
 }
+
 
 ReactDOM.render(
     <App />,
