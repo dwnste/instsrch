@@ -45,10 +45,10 @@ class App extends Component {
                     firstGeoObject.getLocalities().length
                         ? firstGeoObject.getLocalities()
                         : firstGeoObject.getAdministrativeAreas(),
-                    firstGeoObject.getThoroughfare()
-                    || firstGeoObject.getPremise(),
-                ].filter(Boolean)
+                    firstGeoObject.getThoroughfare() || firstGeoObject.getPremise()]
+                .filter(Boolean)
                 .join(', ');
+
                 const balloonContent = firstGeoObject.getAddressLine();
                 return { balloonContent, iconCaption };
             });
