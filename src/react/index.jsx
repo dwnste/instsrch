@@ -32,6 +32,7 @@ class App extends Component {
         offset: 0,
         count: 50,
         radius: 1000,
+        iconCaption: 'ищем...',
     }
 
     loadItems() {
@@ -51,9 +52,18 @@ class App extends Component {
     }
 
     onMapClick(e) {
+        console.log(e);
         this.setState({
             photos: [],
             coords: e.get('coords'),
+            offset: 0,
+        });
+    }
+
+    onPlacemarkDragend(e) {
+        this.setState({
+            photos: [],
+            coords: e.originalEvent.target.geometry.getCoordinates(),
             offset: 0,
         });
     }
@@ -62,7 +72,7 @@ class App extends Component {
         return <div>
             <div id="map">
                 <Map onClick={ e => this.onMapClick(e) } center={MAP_CENTER} width={'100%'} height={'270px'} zoom={10} state={{ controls: ['default'] }}>
-                    <Marker lat={ this.state.coords[0] } lon={ this.state.coords[1] } />
+                    <Marker onDragend={ e => this.onPlacemarkDragend(e) } lat={ this.state.coords[0] } lon={ this.state.coords[1] } properties={{ iconCaption: this.state.iconCaption }} options={{ draggable: true, preset: 'islands#blackDotIconWithCaption' }} balloonState={this.state.balloonState} />
                 </Map>
             </div>
             <div id="content">
