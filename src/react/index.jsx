@@ -85,29 +85,23 @@ class App extends Component {
             });
     }
 
-    onMapClick(e) {
-        this.updatePlacemark(e.get('coords'));
-    }
-
-    onPlacemarkDragend(e) {
-        this.updatePlacemark(e.originalEvent.target.geometry.getCoordinates());
-    }
-
-    mapSettings = {
-        center: MAP_CENTER,
-        width: '100%',
-        height: '270px',
-        zoom: 10,
-        state: { controls: ['default'] },
-        onClick: e => this.onMapClick(e),
-        onAPIAvailable: (api) => { this.setState({ api }); this.updatePlacemark(MAP_CENTER); },
-    };
-
     render() {
         return <div>
             <div id="map">
-                <Map { ...this.mapSettings }>
-                    <Marker onDragend={ e => this.onPlacemarkDragend(e) }
+                <Map
+                    center={MAP_CENTER} width='100%' height='270px' zoom={10}
+                    state={{ controls: ['default'] }}
+                    onClick={ e => this.updatePlacemark(e.get('coords')) }
+                    onAPIAvailable={
+                        api => {
+                            this.setState({ api });
+                            this.updatePlacemark(MAP_CENTER);
+                        }
+                    }>
+                    <Marker
+                        onDragend={
+                            e => this.updatePlacemark(e.originalEvent.target.geometry.getCoordinates())
+                        }
                         lat={ this.state.coords[0] }
                         lon={ this.state.coords[1] }
                         properties={{
@@ -115,7 +109,9 @@ class App extends Component {
                             balloonContent: this.state.balloonContent }}
                             options={{
                                 draggable: true,
-                                preset: 'islands#blackDotIconWithCaption' }} />
+                                preset: 'islands#blackDotIconWithCaption'
+                            }}
+                        />
                 </Map>
             </div>
             <div id="content">
