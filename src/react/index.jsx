@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import InfiniteScroll from 'react-infinite-scroller';
 import moment from 'moment';
-import { Map, Marker, MarkerLayout } from 'yandex-map-react';
+import { Map, Marker } from 'yandex-map-react';
 import { getPhotos } from 'lib';
 
 moment.locale('ru');
