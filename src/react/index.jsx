@@ -100,7 +100,7 @@ class App extends Component {
             <div id="content">
                 <InfiniteScroll
                     pageStart={0}
-                    loadMore={this.loadItems.bind(this)}
+                    loadMore={ ::this.loadItems }
                     hasMore={this.state.offset <= this.state.available}
                     loader={<Loader />}
                     useWindow={false}>
