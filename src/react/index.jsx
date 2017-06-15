@@ -57,12 +57,18 @@ class App extends Component {
     updatePlacemark(coords) {
         this.getPlacemarkContent()
             .then((content) => {
-                this.setState({
-                    photos: [],
-                    coords,
-                    offset: 0,
-                    ...content,
-                });
+                if (this.state.coords === coords) {
+                    this.setState({
+                        ...content,
+                    });
+                } else {
+                    this.setState({
+                        photos: [],
+                        coords,
+                        offset: 0,
+                        ...content,
+                    });
+                }
             });
     }
 
