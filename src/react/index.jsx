@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import InfiniteScroll from 'react-infinite-scroller';
 import moment from 'moment';
-import ymaps from 'ymaps';
-import { getPhotos, createPlacemark, updateMyPlacemark } from 'lib';
+import { Map, Marker, MarkerLayout } from 'yandex-map-react';
+import { getPhotos } from 'lib';
 
 moment.locale('ru');
 
@@ -24,7 +24,6 @@ function Loader() {
     return <div className="loader">Loading ...</div>;
 }
 
-
 class App extends Component {
     state = {
         available: 0,
@@ -33,46 +32,6 @@ class App extends Component {
         offset: 0,
         count: 50,
         radius: 1000,
-    }
-
-    update = (coords) => {
-        updateMyPlacemark(coords, this.myPlacemark);
-        this.setState({
-            coords, offset: 0, photos: []
-        });
-    }
-
-    myPlacemark;
-
-    mapClickHandler = (e) => {
-        this.update(e.get('coords'));
-    };
-
-    componentDidMount() {
-        ymaps.ready(() => {
-            // инициализация карты
-            this.myMap = new ymaps.Map('map', {
-                center: MAP_CENTER,
-                zoom: 9,
-            }, {
-                searchControlProvider: 'yandex#search',
-            });
-
-            this.myMap.events.add('click', this.mapClickHandler);
-            // ставим метку и грузим фотографии, когда карта загрузилась
-            this.myPlacemark = createPlacemark(MAP_CENTER); // создаем метку
-            this.myMap.geoObjects.add(this.myPlacemark); // добавляем на карту
-            updateMyPlacemark(MAP_CENTER, this.myPlacemark); // обновляем текст метки
-
-            this.myPlacemark.events.add('dragend', () => {
-                this.update(this.myPlacemark.geometry.getCoordinates());
-            });
-        });
-    }
-
-    componentWillUnmount() {
-        this.myMap.events.remove('click', this.mapClickHandler);
-        this.myMap.destroy();
     }
 
     loadItems() {
@@ -91,21 +50,38 @@ class App extends Component {
             });
     }
 
+    onMapClick(e) {
+        this.setState({
+            photos: [],
+            coords: e.get('coords'),
+            offset: 0,
+        });
+    }
+
     render() {
-        return <InfiniteScroll
-            pageStart={0}
-            loadMore={this.loadItems.bind(this)}
-            hasMore={this.state.offset <= this.state.available}
-            loader={<Loader />}
-            useWindow={false}>
-                <div className="scroll_container">
-                    {this.state.photos.map((photo, i) => <Photo photo={photo} key={i} />)}
-                </div>
-        </InfiniteScroll>;
+        return <div>
+            <div id="map">
+                <Map onClick={ e => this.onMapClick(e) } center={MAP_CENTER} width={'100%'} height={'270px'} zoom={10} state={{ controls: ['default'] }}>
+                    <Marker lat={ this.state.coords[0] } lon={ this.state.coords[1] } />
+                </Map>
+            </div>
+            <div id="content">
+                <InfiniteScroll
+                    pageStart={0}
+                    loadMore={this.loadItems.bind(this)}
+                    hasMore={this.state.offset <= this.state.available}
+                    loader={<Loader />}
+                    useWindow={false}>
+                        <div className="scroll_container">
+                            {this.state.photos.map((photo, i) => <Photo photo={photo} key={i} />)}
+                        </div>
+                </InfiniteScroll>
+            </div>
+        </div>;
     }
 }
 
 ReactDOM.render(
     <App />,
-    document.getElementById('content'),
+    document.getElementById('root'),
 );
