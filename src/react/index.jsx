@@ -87,11 +87,29 @@ class App extends Component {
         this.updatePlacemark(e.originalEvent.target.geometry.getCoordinates());
     }
 
+    mapSettings = {
+        center: MAP_CENTER,
+        width: '100%',
+        height: '270px',
+        zoom: 10,
+        state: { controls: ['default'] },
+        onClick: e => this.onMapClick(e),
+        onAPIAvailable: (api) => { this.setState({ api }); this.updatePlacemark(MAP_CENTER); },
+    };
+
     render() {
         return <div>
             <div id="map">
-                <Map onAPIAvailable={ (api) => { this.setState({ api }); this.updatePlacemark(MAP_CENTER); }}onClick={ e => this.onMapClick(e) } center={MAP_CENTER} width={'100%'} height={'270px'} zoom={10} state={{ controls: ['default'] }}>
-                    <Marker onDragend={ e => this.onPlacemarkDragend(e) } lat={ this.state.coords[0] } lon={ this.state.coords[1] } properties={{ iconCaption: this.state.iconCaption, balloonContent: this.state.balloonContent }} options={{ draggable: true, preset: 'islands#blackDotIconWithCaption' }} />
+                <Map { ...this.mapSettings }>
+                    <Marker onDragend={ e => this.onPlacemarkDragend(e) }
+                        lat={ this.state.coords[0] }
+                        lon={ this.state.coords[1] }
+                        properties={{
+                            iconCaption: this.state.iconCaption,
+                            balloonContent: this.state.balloonContent }}
+                            options={{
+                                draggable: true,
+                                preset: 'islands#blackDotIconWithCaption' }} />
                 </Map>
             </div>
             <div id="content">
