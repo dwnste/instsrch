@@ -35,6 +35,35 @@ class App extends Component {
         iconCaption: 'ищем...',
     }
 
+    getPlacemarkContent() {
+        return this.state.api.geocode(this.state.coords)
+            .then(res => res.geoObjects.get(0))
+            .then((firstGeoObject) => {
+                const iconCaption = [
+                    firstGeoObject.getLocalities().length
+                        ? firstGeoObject.getLocalities()
+                        : firstGeoObject.getAdministrativeAreas(),
+                    firstGeoObject.getThoroughfare()
+                    || firstGeoObject.getPremise(),
+                ].filter(Boolean)
+                .join(', ');
+                const balloonContent = firstGeoObject.getAddressLine();
+                return { balloonContent, iconCaption };
+            });
+    }
+
+    updatePlacemark(coords) {
+        this.getPlacemarkContent()
+            .then((content) => {
+                this.setState({
+                    photos: [],
+                    coords,
+                    offset: 0,
+                    ...content,
+                });
+            });
+    }
+
     loadItems() {
         getPhotos({ ...this.state })
             .then((resp) => {
@@ -52,27 +81,18 @@ class App extends Component {
     }
 
     onMapClick(e) {
-        console.log(e);
-        this.setState({
-            photos: [],
-            coords: e.get('coords'),
-            offset: 0,
-        });
+        this.updatePlacemark(e.get('coords'));
     }
 
     onPlacemarkDragend(e) {
-        this.setState({
-            photos: [],
-            coords: e.originalEvent.target.geometry.getCoordinates(),
-            offset: 0,
-        });
+        this.updatePlacemark(e.originalEvent.target.geometry.getCoordinates());
     }
 
     render() {
         return <div>
             <div id="map">
-                <Map onClick={ e => this.onMapClick(e) } center={MAP_CENTER} width={'100%'} height={'270px'} zoom={10} state={{ controls: ['default'] }}>
-                    <Marker onDragend={ e => this.onPlacemarkDragend(e) } lat={ this.state.coords[0] } lon={ this.state.coords[1] } properties={{ iconCaption: this.state.iconCaption }} options={{ draggable: true, preset: 'islands#blackDotIconWithCaption' }} balloonState={this.state.balloonState} />
+                <Map onAPIAvailable={ (api) => { this.setState({ api }); this.updatePlacemark(MAP_CENTER); }}onClick={ e => this.onMapClick(e) } center={MAP_CENTER} width={'100%'} height={'270px'} zoom={10} state={{ controls: ['default'] }}>
+                    <Marker onDragend={ e => this.onPlacemarkDragend(e) } lat={ this.state.coords[0] } lon={ this.state.coords[1] } properties={{ iconCaption: this.state.iconCaption, balloonContent: this.state.balloonContent }} options={{ draggable: true, preset: 'islands#blackDotIconWithCaption' }} balloonState={this.state.balloonState} />
                 </Map>
             </div>
             <div id="content">
