@@ -70,11 +70,8 @@ class App extends Component {
         getPhotos({ ...this.state })
             .then((resp) => {
                 if (resp.photos) {
-                    resp.photos.map((photo) => {
-                        this.state.photos.push(photo);
-                    });
-
                     this.setState({
+                        photos: this.state.photos.concat(resp.photos),
                         offset: this.state.offset + this.state.count,
                         available: resp.photosAvailable,
                     });
