@@ -13,6 +13,17 @@ const getPhotos = ({coords, radius, count, offset}) => {
                 .catch( ex => console.log('parsing failed', ex) );
 }
 
+const getData = (id) => {
+    const url = `//api.vk.com/method/users.get?user_ids=${id}&fields=photo_200&name_case=nom`
+    return fetchJsonp(url)
+            .then( response => response.json())
+            .then( ({ response }) => {
+                        const [data, ...length] = response;
+                        return {data, length};
+                    })
+            .catch( ex => console.log('parsing failed', ex) );
+};
+
 // Создание метки.
 const createPlacemark = coords =>
     new ymaps.Placemark(
@@ -59,5 +70,5 @@ const updateMyPlacemark = (coords, placemark) => {
 };
 
 
-export { getPhotos, createPlacemark, updateMyPlacemark };
+export { getPhotos, getData, createPlacemark, updateMyPlacemark };
 

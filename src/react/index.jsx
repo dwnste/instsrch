@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import { withRouter } from 'react-router';
-import { BrowserRouter as Router, Link, Route, IndexRoute } from 'react-router-dom';
+import { BrowserRouter as Router, Link, Route, IndexRoute, Switch } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 import { Map, Marker } from 'yandex-map-react';
 import InfiniteScroll from 'react-infinite-scroller';
@@ -10,7 +10,7 @@ import InfiniteScroll from 'react-infinite-scroller';
 import moment from 'moment';
 import * as qs from 'query-string';
 
-import { getPhotos } from 'lib';
+import { getPhotos, getData } from 'lib';
 
 
 moment.locale('ru');
@@ -19,14 +19,21 @@ const MAP_CENTER = [55.753994, 37.622093];
 
 
 function Photo(props) {
+    if (props.photo.owner_id > 0) {
+        return <div className="image">
+                    <img src={props.photo.src} />
+                        <Link to={`/react/user/${props.photo.owner_id}`}>
+                            {moment(props.photo.created * 1000).format('L')}
+                        </Link>
+                </div>;
+    }
+
     return <div className="image">
-                <img src={props.photo.src} />
-                <Router>
-                    <Link to={`/photo/${props.photo.pid}`}>
-                        {moment(props.photo.created * 1000).format('L')}
-                    </Link>
-                </Router>
-            </div>;
+            <img src={props.photo.src} />
+                <a href={ 'http://vk.com/club' + parseInt(props.photo.owner_id * -1)}>
+                    {moment(props.photo.created * 1000).format('L')}
+                </a>
+        </div>
 }
 
 
@@ -34,6 +41,30 @@ function Loader() {
     return <div className="loader">Loading ...</div>;
 }
 
+class UserPage extends Component {
+    state = {
+        data: {
+            first_name: null,
+            last_name: null,
+            photo_200: null
+        }
+    }
+    
+    componentDidMount() {
+        getData(location.pathname.split('/')[3]).then(({data, length}) => {
+            this.setState({
+                data: data
+            })
+        });
+    }
+
+    render() {
+        return <div>
+                <img src={ this.state.data.photo_200 } alt=""/>
+                <p>{ this.state.data.first_name } { this.state.data.last_name }</p>
+            </div>
+    }
+}
 
 class App extends Component {
     static propTypes = {
@@ -124,8 +155,9 @@ class App extends Component {
                     onClick={ e => this.updatePlacemark(e.get('coords')) }
                     onAPIAvailable={
                         api => {
-                            this.setState({ api });
-                            this.updatePlacemark(this.state.coords);
+                            this.setState({ api }, () => {
+                                this.updatePlacemark(this.state.coords);
+                            });
                         }
                     }>
                     <Marker
@@ -163,7 +195,10 @@ class App extends Component {
 
 ReactDOM.render(
         <Router>
-            <Route path='/' component={ App }></Route>
+            <Switch>
+                <Route exact path='/react/' component={ App }></Route>
+                <Route path='/react/user/:id' component={ UserPage }></Route>
+            </Switch>
         </Router>,
     document.getElementById('root'),
 );
