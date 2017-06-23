@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import InfiniteScroll from 'react-infinite-scroller';
-import moment from 'moment';
+
+import { withRouter } from 'react-router';
+import { BrowserRouter as Router, Link, Route, IndexRoute } from 'react-router-dom';
+import { PropTypes } from 'prop-types';
 import { Map, Marker } from 'yandex-map-react';
+import InfiniteScroll from 'react-infinite-scroller';
+
+import moment from 'moment';
+import * as qs from 'query-string';
+
 import { getPhotos } from 'lib';
 
 
@@ -14,9 +21,11 @@ const MAP_CENTER = [55.753994, 37.622093];
 function Photo(props) {
     return <div className="image">
                 <img src={props.photo.src} />
-                <a href={props.photo.src_big} target="_blank">
-                    {moment(props.photo.created * 1000).format('L')}
-                </a>
+                <Router>
+                    <Link to={`/photo/${props.photo.pid}`}>
+                        {moment(props.photo.created * 1000).format('L')}
+                    </Link>
+                </Router>
             </div>;
 }
 
@@ -27,10 +36,29 @@ function Loader() {
 
 
 class App extends Component {
+    static propTypes = {
+        match: PropTypes.object.isRequired,
+        location: PropTypes.object.isRequired,
+        history: PropTypes.object.isRequired
+    }
+    
+    defaultCoordinates = (
+        ('lat' in (qs.parse(this.props.location.search)) &&
+        'lng' in (qs.parse(this.props.location.search)))
+        ?
+        [
+            parseFloat(qs.parse(this.props.location.search).lat),
+            parseFloat(qs.parse(this.props.location.search).lng)
+        ]
+        :
+        MAP_CENTER
+    );
+
     state = {
         available: 0,
         photos: [],
-        coords: MAP_CENTER,
+        coords: this.defaultCoordinates,
+        mapCoords: this.defaultCoordinates,
         offset: 0,
         count: 50,
         radius: 1000,
@@ -62,6 +90,7 @@ class App extends Component {
                         ...content,
                     });
                 } else {
+                    this.props.history.push(`/react/?lat=${coords[0]}&lng=${coords[1]}`)
                     this.setState({
                         photos: [],
                         coords,
@@ -86,16 +115,17 @@ class App extends Component {
     }
 
     render() {
+        const { match, location, history } = this.props
         return <div>
             <div id="map">
                 <Map
-                    center={MAP_CENTER} width='100%' height='270px' zoom={10}
+                    center={ this.state.mapCoords } width='100%' height='350px' zoom={10}
                     state={{ controls: ['default'] }}
                     onClick={ e => this.updatePlacemark(e.get('coords')) }
                     onAPIAvailable={
                         api => {
                             this.setState({ api });
-                            this.updatePlacemark(MAP_CENTER);
+                            this.updatePlacemark(this.state.coords);
                         }
                     }>
                     <Marker
@@ -132,6 +162,8 @@ class App extends Component {
 
 
 ReactDOM.render(
-    <App />,
+        <Router>
+            <Route path='/' component={ App }></Route>
+        </Router>,
     document.getElementById('root'),
 );
