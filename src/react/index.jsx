@@ -61,7 +61,7 @@ class UserPage extends Component {
     render() {
         return <div>
                 <img src={ this.state.data.photo_200 } alt=""/>
-                <p>{ this.state.data.first_name } { this.state.data.last_name }</p>
+                <p><a href={'http://vk.com/id' + this.state.data.uid}>{ this.state.data.first_name } { this.state.data.last_name }</a></p>
             </div>
     }
 }
